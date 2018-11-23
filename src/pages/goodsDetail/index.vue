@@ -24,6 +24,11 @@
                     <section>
                         <div>租赁流程</div>
                         <div>选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
+                        <div>租期结束后可选方案</div>
+                        <div>归还</div>
+                        <div>支持邮寄归还</div>
+                        <div>买断</div>
+                        <div>支持尾款终身拥有</div>
                     </section>
                 </scroll-view>
             </swiper-item>
