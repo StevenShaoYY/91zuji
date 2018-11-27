@@ -17,8 +17,8 @@
                         </swiper>
                         <div class="goods-title">{{goodsDetail.name}}</div>
                         <div class="goods-price-container">
-                            <div class="rent-price">￥<span class="big-price">{{goodsDetail.rentPrice}}</span><span class="normal-font">/{{goodsDetail.periodUnit}}</span></div>
-                            <div class="total-price">商品价值：￥{{goodsDetail.retailPrice}}</div>
+                            <div class="rent-price">¥<span class="big-price">{{goodsDetail.rentPrice}}</span><span class="normal-font">/{{goodsDetail.periodUnit}}</span></div>
+                            <div class="total-price">商品价值：¥{{goodsDetail.retailPrice}}</div>
                         </div>
                     </section>
                     <section>
@@ -50,77 +50,63 @@
             </swiper-item>
             <swiper-item>
                 <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    <div>
-                    33333333333333333333333
+                    <div class="comment-container has-comment" v-if="commentList.length>0">
+                        <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
+                    </div>
+                    <div class="comment-container no-comment-container" v-if="commentList.length==0">
+                        <div class="no-comment">暂无评论</div>
                     </div>
                 </scroll-view>
             </swiper-item>
         </swiper>
-      
-        <!-- <view class="comments" v-if="comment.count > 0">
-            <view class="h">
-            <navigator :url="'../comment/comment?valueId=' + goods.id + '&typeId=0'">
-                <text class="t">评价({{comment.count > 999 ? '999+' : comment.count}})</text>
-                <text class="i">查看全部</text>
-            </navigator>
-            </view>
-            <view class="b">
-            <view class="item">
-                <view class="info">
-                <view class="user">
-                    <img :src="comment.data.avatar"/>
-                    <text>{{comment.data.nickname}}</text>
-                </view>
-                <view class="time">{{comment.data.add_time}}</view>
-                </view>
-                <view class="content">
-                {{comment.data.content}}
-                </view>
-                <view class="imgs" v-if="comment.data.pic_list.length">
-                <image class="img" v-for="(item, index) of comment.data.pic_list" :key="item.id" :data-index="index" :src="item.pic_url"/>
-                </view>
-                <view class="spec">白色 2件</view>
-            </view>
-            </view>
-        </view> -->
-        <!-- <view class="attr-pop-box" :hidden="!openAttr">
-        <view class="attr-pop">
-            <view class="close" @click="closeAttr">
-            <img class="icon" src="/static/images/icon_close.png"/>
-            </view>
-            <view class="img-info">
-            <img class="img" :src="gallery[0].img_url"/>
-            <view class="info">
-                <view class="c">
-                <view class="p">价格：￥{{goods.retail_price}}</view>
-                <view class="a" v-if="productList.length">已选择：{{checkedSpecText}}</view>
-                </view>
-            </view>
-            </view>
-            <view class="spec-con">
-            <view class="spec-item" v-for="(item, index) of specificationList" :key="item.specification_id" :data-index="index">
-                <view class="name">{{item.name}}</view>
-                <view class="values">
-                <view :class="iitem.checked ? 'selected value' : 'value'" @click="clickSkuValue" v-for="(iitem, iindex) of item.valueList" :key="iitem.id" :data-value-id="iitem.id" :data-index="iindex" :data-name-id="iitem.specification_id">{{iitem.value}}</view>
-                </view>
-            </view>
-            <view class="number-item">
-                <view class="name">数量</view>
-                <view class="selnum">
-                <view class="cut" @click="cutNumber">-</view>
-                <input :value="number" class="number" disabled="true" type="number" />
-                <view class="add" @click="addNumber">+</view>
-                </view>
-            </view>
-            </view>
-        </view>
-        </view> -->
+        <div class="attr-pop-box" :hidden="openAttr">
+            <div class="attr-pop">
+                <div class="img-info">
+                    <div class="close" @click="closeAttr">
+                        <img class="icon" src="/static/images/btn_close_popup.png"/>
+                    </div>
+                    <img class="img" :src="goodsDetail.picUrl"/>
+                    <div class="info">
+                        {{goodsDetail.name}}
+                    </div>
+                </div>
+                <div class="price-container">
+                    <div class="p">¥{{selectGoods.rentPrice}}</div>
+                    <div class="a">商品价值:¥{{selectGoods.goodsPrice}}</div>
+                </div>
+                <div class="spec-con">
+                    <div class="spec-item" v-for="(item, index) of goodsDetail.specificationList" :key="index" :data-index="index">
+                        <div class="name">{{item.name}}</div>
+                        <div class="values">
+                            <div :class="iitem.checked ? iitem.checked=='noexist'?'value unexist-value':'selected value' : 'value'"  @click="selectproduct" v-for="(iitem, iindex) of item.specificationLists" :key="iindex" :data-index="iindex" :data-name-id="iitem.name" :data-sername-id="iitem.serName">{{iitem.name}}</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="name">{{goodsDetail.financeSpecificationList[0].name}}</div>
+                        <div class="values">
+                            <div :class="item2.checked ? 'selected value' : 'value'"  @click="selectRentTime" v-for="(item2, index2) of goodsDetail.financeSpecificationList[0].goodsFinanceSpecificationLists" :key="index2" :data-index="index2" :data-name-id="item2.name">{{item2.name}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="goodsDetail.finaceList.length>0" class="yiwao-container">
+                    <div>意外保障<span class="sub">什么是意外保障？</span></div>
+                    <div class="yiwai-select">
+                        <div :class="goodsDetail.finaceList[0].checked ? 'selected value first' : 'value first'">一次性支付&nbsp&nbsp|&nbsp&nbsp¥{{goodsDetail.finaceList[0].amount}}</div>
+                        <div class="unexist-value value" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==false">分期信息选择规格后显示</div>
+                        <div :class="goodsDetail.finaceList[1].checked ? 'selected value' : 'value'" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==true">分1期&nbsp&nbsp|&nbsp&nbsp每期¥15.00</div>
+                    </div>
+                </div>
+                <div class="startOrder">
+                    开始下单
+                </div>
+            </div>
+        </div>
         <view class="bottom-btn">
-            <view class="l l-collect" >
-                <img class="icon"/>
-                收藏
+            <view class="l-collect" >
+                <img v-if="goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_current.png"/>
+                <img v-if="!goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_normal.png"/>
             </view>
-            <view class="c">选择规格</view>
+            <view @click="showDialog" class="select-guige">选择规格</view>
         </view>
     </view>
 </div>
@@ -128,29 +114,29 @@
 
 <script>
     import mixins from '../../mixins'
-    // import Topic from '../../components/topic.vue';
+    import CommentCard from '../../components/commentCard.vue';
     export default {
         mpType: 'page',
         mixins: [mixins],
-        // components: {
-        //     'yx-slider': YXSlider,
-        //     'topic': Topic
-        // },
+        components: {
+            'comment-card': CommentCard
+        },
         data () {
             return {
-                goodsDetail: {},
+                goodsDetail: {
+                    financeSpecificationList:[{}],
+                    finaceList: [{}]
+                },
+                commentList: [],
                 tabList: ['商品', '详情', '评论'],
                 activeItem: 0,
-                detailList: [[111111111], [22222222], [333333333]],
                 winHeight: '',
                 openAttr:true,
-                cartGoodsCount: 0,
-                number: 1,
-                checkedSpecText: '请选择规格数量',
-                openAttr: false,
-                noCollectImage: '/static/images/icon_collect.png',
-                hasCollectImage: '/static/images/icon_collect_checked.png',
-                collectBackImage: '/static/images/icon_collect.png'
+                selectGoods: {
+                    rentPrice: '',
+                    goodsPrice: ''
+                },
+                fenqiSelectFlag: false
             }
         },
         created () {
@@ -160,7 +146,12 @@
             let dto = {
                 "id": this.$mp.query.id
             }
-            console.log(this.$mp)
+            let commentDto = {
+                "pageNum": 0,
+                "pageSize": 0,
+                "type": 0,
+                "valueId": this.$mp.query.id
+            }
             if (this.$mp.platform === 'wechat') {
                 wx.getSystemInfo({
                     success: res => {
@@ -186,20 +177,53 @@
             }
             this.POST('api/mallGoods/detail', dto, res => {
                 let result = res.data.result;
+                result.rentPrice = result.rentPrice.toFixed(2)
+                result.retailPrice = result.retailPrice.toFixed(2)
+                for (let it in result.specificationList) {
+                    let specificationLists = []
+                    result.specificationList[it].specificationLists = specificationLists
+                    for(let itt of result.specificationList[it].specificationList) {
+                        result.specificationList[it].specificationLists.push({
+                            'name': itt,
+                            'serName': it,
+                            'checked': false
+                        })
+                    }
+                }
+                for (let it of result.financeSpecificationList) {
+                    let goodsFinanceSpecificationLists = []
+                    it.goodsFinanceSpecificationLists = goodsFinanceSpecificationLists
+                    for(let itt of it.goodsFinanceSpecificationList) {
+                        it.goodsFinanceSpecificationLists.push({
+                            'name': itt,
+                            'checked': false
+                        })
+                    }
+                }
+                for (let it of result.finaceList) {
+                    it.checked = false
+                }
                 this.goodsDetail = result
-                console.log(this.goodsDetail)
+                this.selectGoods.rentPrice = this.goodsDetail.rentPrice
+                this.selectGoods.goodsPrice = this.goodsDetail.retailPrice
             });
-            // this.POST('api/home/topic', '', res => {
-            //     let result = res.data.result;
-            //     this.topic = result
-            // });
-            // this.POST('/api/mallCategory/list', this.pageData, res => {
-            //     let result = res.data.result;
-            //     for (let item of result) {
-            //         item.categoryUrl =  `/pages/catagory/index?id=${item.id}`
-            //     }
-            //     this.categoryList = result
-            // }, );
+            this.POST('comment/list', commentDto, res => {
+                let result = res.data.result;
+                this.commentList = result.list
+                // this.commentList = [{
+                //     addTime: '2018-2-12 12:23:30' ,
+                //     content: 'osajdljasdisajd按时大大' ,
+                //     hasPicture: 'false' ,
+                //     id: '2222222' ,
+                //     picUrls:'sssss',
+                //     star:'3' ,
+                //     type:'0' ,
+                //     user : '无动于衷23aa' ,
+                //     userAvatar: '' ,
+                //     userId : '11111' ,
+                //     valueId: '222222'
+                //  }]
+            });
         },
         methods: {
             switchTabBySwiper (e) {
@@ -207,25 +231,105 @@
             },
             switchTab (index) {
                 this.activeItem = index
-            }
+            },
+            showDialog() {
+                this.openAttr = false;
+            },
+            closeAttr () {
+                this.openAttr = true;
+            },
+            selectproduct(e) {
+                //1.点击改变样式
+                //2.检查是否有货
+                console.log(e)
+                console.log(this.goodsDetail.specificationList)
+                let checkedValues = [];
+                let _specificationList = this.goodsDetail.specificationList;
+                let specNameId = e.currentTarget.dataset.index;
+                let specSernameId = e.currentTarget.dataset.sernameId;
+                if (_specificationList[specSernameId].specificationLists.checked === 'noexist') {
+                    return
+                }
+                if (_specificationList[specSernameId].specificationLists[specNameId].checked === true) {
+                    // console.log(111)
+                    _specificationList[specSernameId].specificationLists[specNameId].checked = false
+                } else {
+                    for (let i of _specificationList[specSernameId].specificationLists) {
+                        if (i.checked !== 'noexist')
+                            i.checked = false
+                    }
+                    _specificationList[specSernameId].specificationLists[specNameId].checked = true
+                }
+                this.goodsDetail.specificationList = _specificationList;
+                this.changeSpecInfo()
+            },
+            changeSpecInfo () {
+                let _specificationListTemp = this.goodsDetail.specificationList;
+                let hasSelectItemList = []
+                for (let i of _specificationListTemp) {
+                    i.checkedFlag = false
+                    for (let j of i.specificationLists) {
+                        if (j.checked == true) {
+                            i.checkedFlag = true
+                            hasSelectItemList.push(j.name)
+                        }
+                    }
+                }
+                for (let i of _specificationListTemp) {
+                    if (i.checkedFlag === false) {
+                        for (let j of i.specificationLists) {
+                            j.checked = 'noexist'
+                        }
+                    }
+                }
+                for (let i of this.goodsDetail.productList) {
+                    if(this.isContained(i.specifications, hasSelectItemList) && i.number>0) {
+                        let needShow = this.diffArray(i.specifications, hasSelectItemList)
+                        console.log(needShow)
+                        for (let j of _specificationListTemp) {
+                            if (j.checkedFlag === false) {
+                                for (let k of j.specificationLists) {
+                                    if (needShow.includes(k.name)) {
+                                        k.checked = false
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                }
+                this.goodsDetail.specificationList = _specificationListTemp
+            },
+            //数组相减
+            diffArray(a, b) {
+                return a.filter(el => !b.includes(el))
+            },
+            //判断相同
+            isContained (a, b){
+                if(!(a instanceof Array) || !(b instanceof Array)) return false;
+                if(a.length < b.length) return false;
+                var aStr = a.toString();
+                for(var i = 0, len = b.length; i < len; i++){
+                    if(aStr.indexOf(b[i]) == -1) 
+                        return false;
+                }
+                return true;
+            },
+            // 判断规格是否选择完整(每一种至少选择一项)，加入购物车前进行判断
+            isCheckedAllSpec () {
+
+            },
+            selectRentTime(e) {
+                //1.点击改变样式
+                //2.改变价格
+                //3.改变保障价格
+                console.log(e)
+            } 
         }
     }
 </script>
 
 
 <style scoped lang="scss">
-    @font-face {
-        font-family: 'iconfont';  
-        src: url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.eot');
-        src: url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.eot?#iefix') format('embedded-opentype'),
-        url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.woff') format('woff'),
-        url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.ttf') format('truetype'),
-        url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.svg#iconfont') format('svg');
-    }
-    .iconfont {
-        font-family: "iconfont" !important;
-    }
-    .icon-favor:before { content: "\e64c"; }
     .tab-list {
         display: flex;
         height: 70rpx;
@@ -332,7 +436,33 @@
         height: 100rpx;
         position: fixed;
         bottom: 0;
-        background-color: #FF6900
+        background-color: #FFFFFF;
+        border-top:1px solid #F5f5f5;
+        display: flex;
+        justify-content: space-between;
+    }
+    .l-collect {
+        height: 100rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 60rpx;
+    }
+    .l-collect .icon {
+        width: 36rpx;
+        height: 34rpx;
+    }
+    .select-guige {
+        background-color: #FF7000;
+        color:#ffffff;
+        text-align: center;
+        height: 80rpx;
+        border-radius: 40rpx;
+        width: 595rpx;
+        margin-top: 10rpx;
+        line-height: 80rpx;
+        font-size: 26rpx;
+        margin-right: 15rpx;
     }
     .img-container {
         margin-top: 20rpx;
@@ -343,6 +473,175 @@
         margin-top:-8rpx;
         height: 900rpx;
     }
+    .comment-container {
+        width: 692rpx;
+        min-height: 82vh;
+        margin-left: 29rpx;
+        border: 1px solid #FAFAFA;
+        border-radius: 20rpx;
+        margin-top: 20rpx;
+        box-shadow: 2rpx 2rpx 50rpx #cccccc;
+    }
+    .no-comment-container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        color: #a8a8a8;
+    }
+    .attr-pop-box {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, .5);
+        z-index: 8;
+        bottom: 0rpx;
+    }
+    .attr-pop {
+        width: 750rpx;
+        border-radius: 50rpx 50rpx 0rpx 0;
+        height: auto;
+        max-height: 980rpx;
+        // padding: 30rpx;
+        background: #fff;
+        position: fixed;
+        z-index: 9;
+        bottom: 0rpx;
+        overflow-y: auto;
+    }
+    .img-info {
+        position: relative;
+        width: 100%;
+        height: 300rpx;
+        background-color: #FFF6EF;
+        display: flex;
+        flex-direction: row;
+    }
+    .img-info .img {
+        margin: 60rpx 0 0 60rpx;
+        width: 280rpx;
+        height: 280rpx;
+    }
+    .img-info .info {
+        color: #FF6F00;
+        margin-top: 160rpx;
+        margin-left: 20rpx;
+        font-weight: 700;
+        font-size: 32rpx;
+    }
+    .attr-pop .close {
+        position: absolute;
+        width: 48rpx;
+        height: 48rpx;
+        right: 80rpx;
+        overflow: hidden;
+        top: 31.25rpx;
+    }
 
-    
+    .attr-pop .close .icon {
+        width: 48rpx;
+        height: 48rpx;
+    }
+    .price-container {
+        display: flex;
+        height: 160rpx;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center
+    }
+    .price-container .p {
+        font-weight: 700;
+        font-size: 40rpx;
+    }
+    .price-container .a {
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #999999;
+        margin-top: 10rpx;
+    }
+    .spec-con {
+        width: 692rpx;
+        margin-left: 29rpx;
+        display: flex;
+        flex-direction: column;
+        font-size: 26rpx;
+        margin-top: -20rpx;
+        padding-bottom: 50rpx;
+    }
+    .spec-con .spec-item {
+        display: flex;
+        flex-direction: row;
+    }
+    .spec-con .spec-item .name{
+        flex: 170rpx;
+        margin-top: 30rpx;
+    }
+    .spec-con .spec-item .values{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        flex: 522rpx;
+    }
+    .spec-con .spec-item .values .value{
+        border: 1px solid #999999;
+        height: 54rpx;
+        line-height: 54rpx;
+        padding: 0 20rpx;
+        max-width: 160rpx;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+        overflow:hidden;
+        border-radius: 10rpx;
+        margin-left: 30rpx;
+        margin-top: 30rpx;
+    }
+    .yiwao-container {
+        width: 692rpx;
+        margin-left: 29rpx;
+        border-top: 1px solid #e7e7e7;
+        padding-top: 30rpx;
+        font-size: 26rpx;
+    }
+    .yiwao-container .sub {
+        color:#959595;
+        font-size: 22rpx;
+        margin-left: 15rpx;
+    }
+    .yiwao-container .yiwai-select{
+        display: flex;
+        flex-direction: row;
+    }
+    .yiwao-container .yiwai-select .value {
+        border: 1px solid #9A9A9A;
+        height: 54rpx;
+        line-height: 54rpx;
+        padding: 0 20rpx;
+        border-radius: 10rpx;
+        margin-top: 30rpx;
+    }
+    .yiwao-container .yiwai-select .first {
+        margin-right: 30rpx;
+    }
+    .unexist-value {
+        border: 1px dashed #cacaca !important;
+        color: #9a9a9a !important;
+    }
+    .selected {
+        border: 1px solid #ff6f00 !important;
+        color: #ff6f00 !important;
+    }
+    .startOrder{
+        color: #fff;
+        background-color: #FF6F00;
+        height: 80rpx;
+        border-radius: 40rpx;
+        text-align: center;
+        width: 692rpx;
+        margin-left: 29rpx;
+        line-height: 80rpx;
+        font-weight: 400;
+        font-size: 30rpx;
+        margin-bottom: 30rpx;
+        margin-top: 30rpx;
+    }
 </style>

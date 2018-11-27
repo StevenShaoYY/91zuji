@@ -3,7 +3,7 @@
     <navigator class="product-item" :url="productItem.goodsDetailUrl">
       <img class="img" :src="productItem.picUrl" background-size="cover" />
       <div class="title">{{productItem.name}}</div>
-      <div class="price">￥{{productItem.rentPrice}}/{{productItem.periodUnit}}起</div>
+      <div class="price">¥{{productItem.rentPrice}}/{{productItem.periodUnit}}起</div>
     </navigator>
   </div>
 </template>
