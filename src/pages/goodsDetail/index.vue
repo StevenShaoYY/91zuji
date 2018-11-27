@@ -247,7 +247,7 @@
                 let _specificationList = this.goodsDetail.specificationList;
                 let specNameId = e.currentTarget.dataset.index;
                 let specSernameId = e.currentTarget.dataset.sernameId;
-                if (_specificationList[specSernameId].specificationLists.checked === 'noexist') {
+                if (_specificationList[specSernameId].specificationLists[specNameId].checked === 'noexist') {
                     return
                 }
                 if (_specificationList[specSernameId].specificationLists[specNameId].checked === true) {
