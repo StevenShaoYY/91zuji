@@ -89,11 +89,15 @@
                     </div>
                 </div>
                 <div v-if="goodsDetail.finaceList.length>0" class="yiwao-container">
-                    <div>意外保障<span class="sub">什么是意外保障？</span></div>
+                    <div>意外保障<span class="sub">什么是意外保障？</span>
+                        <navigator class="fa-qa" url="/pages/finaceques/index" >
+                            <img class="img" src="/static/images/question.png" background-size="cover" />
+                        </navigator>
+                    </div>
                     <div class="yiwai-select">
-                        <div :class="goodsDetail.finaceList[0].checked ? 'selected value first' : 'value first'">一次性支付&nbsp&nbsp|&nbsp&nbsp¥{{goodsDetail.finaceList[0].amount}}</div>
+                        <div @click="finaceSelect(0)" :class="goodsDetail.finaceList[0].checked ? 'selected value first' : 'value first'">一次性支付&nbsp&nbsp|&nbsp&nbsp¥{{goodsDetail.finaceList[0].amount}}</div>
                         <div class="unexist-value value" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==false">分期信息选择规格后显示</div>
-                        <div :class="goodsDetail.finaceList[1].checked ? 'selected value' : 'value'" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==true">分1期&nbsp&nbsp|&nbsp&nbsp每期¥15.00</div>
+                        <div @click="finaceSelect(1)" :class="goodsDetail.finaceList[1].checked ? 'selected value' : 'value'" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==true">分{{finace}}期&nbsp&nbsp|&nbsp&nbsp每期¥{{goodsDetail.finaceList[1].amount}}</div>
                     </div>
                 </div>
                 <div class="startOrder">
@@ -137,7 +141,9 @@
                     goodsPrice: ''
                 },
                 fenqiSelectFlag: false,
-                allResultArr: []
+                allResultArr: [],
+                hasRentSelected: false,
+                finace: ''
             }
         },
         created () {
@@ -204,6 +210,14 @@
                 for (let it of result.finaceList) {
                     it.checked = false
                 }
+                let reg = /[1-9][0-9]*/g;
+                if (result.finaceList.length>1) {
+                    let dt = []
+                    result.finaceList[1].dataList = dt
+                    for (let t of result.financeSpecificationList[0].goodsFinanceSpecificationList) {
+                        result.finaceList[1].dataList.push(t.match(reg)[0])
+                    }
+                }
                 this.goodsDetail = result
                 this.selectGoods.rentPrice = this.goodsDetail.rentPrice
                 this.selectGoods.goodsPrice = this.goodsDetail.retailPrice
@@ -243,8 +257,8 @@
             selectproduct(e) {
                 //1.点击改变样式
                 //2.检查是否有货
-                console.log(e)
-                console.log(this.goodsDetail.specificationList)
+                // console.log(e)
+                // console.log(this.goodsDetail.specificationList)
                 let checkedValues = [];
                 let _specificationList = this.goodsDetail.specificationList;
                 let specNameId = e.currentTarget.dataset.index;
@@ -263,6 +277,14 @@
                 }
                 this.goodsDetail.specificationList = _specificationList;
                 this.changeSpecInfo()
+                this.changeAll()
+            },
+            getSelectProduct(id) {
+                for (let i of this.goodsDetail.productList) {
+                    if(i.id == id) {
+                        return i
+                    }
+                }
             },
             powerset(arr) {
                 var ps = [[]];
@@ -338,7 +360,7 @@
                         let curr = this.trimSpliter(copy)
                         data1.specificationLists[j].checked = 'noexist'
                         if(this.allResultArr[curr]) {
-                            console.log(this.allResultArr[curr])
+                            // console.log(this.allResultArr[curr])
                             data1.specificationLists[j].checked = false
                         }
                     }  
@@ -347,14 +369,55 @@
            
             // 判断规格是否选择完整(每一种至少选择一项)，加入购物车前进行判断
             isCheckedAllSpec () {
-
+                let selectItem = this.getSelectItem()
+                for (let j of selectItem) {
+                    if (j === '') {
+                        return false
+                    }
+                }
+                let curr = selectItem.join('+')
+                return this.allResultArr[curr].skus[0]
             },
             selectRentTime(e) {
                 //1.点击改变样式
                 //2.改变价格
                 //3.改变保障价格
-                console.log(e)
-            } 
+                let rentId = e.currentTarget.dataset.index;
+                let rentList = this.goodsDetail.financeSpecificationList[0].goodsFinanceSpecificationLists
+                if(!rentList[rentId].checked) {
+                    for(let j of rentList) {
+                        j.checked = false
+                    }
+                    rentList[rentId].checked = true
+                    this.hasRentSelected = rentId
+                }
+                this.changeAll()
+            },
+            changeAll() {
+                if (this.hasRentSelected!==false && this.isCheckedAllSpec()) {
+                    let sp = this.getSelectProduct(this.isCheckedAllSpec())
+                    this.selectGoods.rentPrice = sp.financeRespDTOList[this.hasRentSelected].price
+                    this.fenqiSelectFlag = true
+                    this.selectGoods.goodsPrice = sp.price
+                    this.finace = this.goodsDetail.finaceList[1].dataList[this.hasRentSelected]
+                } else if (this.isCheckedAllSpec()) {
+                    let sp = this.getSelectProduct(this.isCheckedAllSpec())
+                    this.selectGoods.goodsPrice = sp.price
+                }
+            },
+            finaceSelect(id) {
+                let list = this.goodsDetail.finaceList
+                if(list[id].checked === true) {
+                    list[id].checked = false
+                } else {
+                    for (let i of list) {
+                        i.checked = false
+                    }
+                    list[id].checked = true
+                }
+               
+            }
+
         }
     }
 </script>
@@ -632,6 +695,17 @@
         border-top: 1px solid #e7e7e7;
         padding-top: 30rpx;
         font-size: 26rpx;
+    }
+    .fa-qa {
+        width: 32rpx;
+        height: 32rpx;
+        position: absolute;
+        right: 33rpx;
+        bottom: 0;
+    }
+    .fa-qa .img{
+        width: 32rpx;
+        height: 32rpx
     }
     .yiwao-container .sub {
         color:#959595;
