@@ -136,7 +136,8 @@
                     rentPrice: '',
                     goodsPrice: ''
                 },
-                fenqiSelectFlag: false
+                fenqiSelectFlag: false,
+                allResultArr: []
             }
         },
         created () {
@@ -206,6 +207,7 @@
                 this.goodsDetail = result
                 this.selectGoods.rentPrice = this.goodsDetail.rentPrice
                 this.selectGoods.goodsPrice = this.goodsDetail.retailPrice
+                this.buildResult()
             });
             this.POST('comment/list', commentDto, res => {
                 let result = res.data.result;
@@ -251,7 +253,6 @@
                     return
                 }
                 if (_specificationList[specSernameId].specificationLists[specNameId].checked === true) {
-                    // console.log(111)
                     _specificationList[specSernameId].specificationLists[specNameId].checked = false
                 } else {
                     for (let i of _specificationList[specSernameId].specificationLists) {
@@ -263,57 +264,87 @@
                 this.goodsDetail.specificationList = _specificationList;
                 this.changeSpecInfo()
             },
-            changeSpecInfo () {
-                let _specificationListTemp = this.goodsDetail.specificationList;
-                let hasSelectItemList = []
-                for (let i of _specificationListTemp) {
-                    i.checkedFlag = false
-                    for (let j of i.specificationLists) {
-                        if (j.checked == true) {
-                            i.checkedFlag = true
-                            hasSelectItemList.push(j.name)
-                        }
+            powerset(arr) {
+                var ps = [[]];
+                for (var i=0; i < arr.length; i++) {
+                    for (var j = 0, len = ps.length; j < len; j++) {
+                        ps.push(ps[j].concat(arr[i]));
                     }
                 }
-                for (let i of _specificationListTemp) {
-                    if (i.checkedFlag === false) {
-                        for (let j of i.specificationLists) {
-                            j.checked = 'noexist'
-                        }
-                    }
-                }
-                for (let i of this.goodsDetail.productList) {
-                    if(this.isContained(i.specifications, hasSelectItemList) && i.number>0) {
-                        let needShow = this.diffArray(i.specifications, hasSelectItemList)
-                        console.log(needShow)
-                        for (let j of _specificationListTemp) {
-                            if (j.checkedFlag === false) {
-                                for (let k of j.specificationLists) {
-                                    if (needShow.includes(k.name)) {
-                                        k.checked = false
-                                    }
-                                }
+                return ps;
+            },
+            buildResult() {
+                // this.allResultArr
+                let res = []
+                let proList = this.goodsDetail.productList
+                console.log(this.goodsDetail)
+                for (let i of proList) {
+                    if (i.number <= 0) continue
+                    let set = this.powerset(i.specifications)
+                    for (let j of set) {
+                        let key = j.join('+')
+                        if (res[key]) {
+                            res[key].skus.push(i.id)
+                        } else {
+                            res[key] ={
+                                skus: [i.id]
                             }
                         }
-                    } 
+                    }
                 }
-                this.goodsDetail.specificationList = _specificationListTemp
+                this.allResultArr = res
             },
-            //数组相减
-            diffArray(a, b) {
-                return a.filter(el => !b.includes(el))
-            },
-            //判断相同
-            isContained (a, b){
-                if(!(a instanceof Array) || !(b instanceof Array)) return false;
-                if(a.length < b.length) return false;
-                var aStr = a.toString();
-                for(var i = 0, len = b.length; i < len; i++){
-                    if(aStr.indexOf(b[i]) == -1) 
-                        return false;
+            getSelectItem () {
+                let _specificationListTemp = this.goodsDetail.specificationList;
+                let selectItem = []
+                for (let i of _specificationListTemp) {
+                    let hasAdd = false
+                    for (let j of i.specificationLists) {
+                        if(j.checked === true) {
+                            selectItem.push(j.name)
+                            hasAdd = true
+                        }
+                    }
+                    if (!hasAdd) {
+                        selectItem.push('')
+                    }
                 }
-                return true;
+                return selectItem
             },
+            trimSpliter(arr) {
+                let ret = ''
+                for (let k of arr){
+                    if(k !== '') {
+                        ret = ret + '+' + k
+                    }
+                }
+                if (ret[0] === '+') {
+                    ret = ret.substr(1)
+                }
+                return ret
+            },
+            changeSpecInfo () {
+                let select = this.getSelectItem ()
+                let _specificationListTemp = this.goodsDetail.specificationList;
+                for (let i in _specificationListTemp) {
+                    let copy = this.getSelectItem ()
+                    let data1 = _specificationListTemp[i]
+                    for (let j in data1.specificationLists) {
+                        let item = data1.specificationLists[j].name
+                        if(select[i] === item) {
+                            continue
+                        }
+                        copy[i] = item
+                        let curr = this.trimSpliter(copy)
+                        data1.specificationLists[j].checked = 'noexist'
+                        if(this.allResultArr[curr]) {
+                            console.log(this.allResultArr[curr])
+                            data1.specificationLists[j].checked = false
+                        }
+                    }  
+                }
+            },
+           
             // 判断规格是否选择完整(每一种至少选择一项)，加入购物车前进行判断
             isCheckedAllSpec () {
 
