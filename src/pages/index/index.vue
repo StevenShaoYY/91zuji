@@ -32,8 +32,8 @@
                 topic: [],
                 showLoading: 'hide',
                 pageData: {
-                    pageNum: 0,
-                    pageSize: 0
+                    "pageNum": 0,
+                    "pageSize": 0
                 },
                 scrollX: true
             }
@@ -49,6 +49,7 @@
             this.POST('api/home/topic', '', res => {
                 let result = res.data.result;
                 for (let item of result) {
+                    item.topicMore = `/pages/category/index?id=${item.id}&type=topic`
                     for (let goods of item.goodsList) {
                         goods.goodsDetailUrl = `/pages/goodsDetail/index?id=${goods.id}`
                     }
@@ -58,7 +59,7 @@
             this.POST('/api/mallCategory/list', this.pageData, res => {
                 let result = res.data.result;
                 for (let item of result) {
-                    item.categoryUrl =  `/pages/catagory/index?id=${item.id}`
+                    item.categoryUrl =  `/pages/category/index?id=${item.id}&type=category`
                 }
                 this.categoryList = result
             }, );

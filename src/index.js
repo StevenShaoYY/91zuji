@@ -14,7 +14,9 @@ export default {
         pages: [
             'pages/index/index',
             'pages/goodsDetail/index',
-            'pages/finaceques/index'
+            'pages/finaceques/index',
+            'pages/category/index',
+            'pages/my/index'
         ],
         window: {
             backgroundTextStyle: 'light',
@@ -35,7 +37,7 @@ export default {
                     text: '首页'
                 },
                 {
-                    pagePath: 'pages/index/index',
+                    pagePath: 'pages/my/index',
                     iconPath: 'static/images/tab_mine_normal.png',
                     selectedIconPath: 'static/images/tab_mine_current.png',
                     text: '我的'
@@ -48,7 +50,7 @@ export default {
                     name: '首页'
                 },
                 {
-                    pagePath: 'pages/index/index',
+                    pagePath: 'pages/my/index',
                     icon: 'static/images/tab_mine_normal.png',
                     activeIcon: 'static/images/tab_mine_current.png',
                     name: '我的'

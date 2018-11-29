@@ -26,7 +26,7 @@ export default {
             if (type === 'user') {
                 url = `http://fanyou.rank-tech.com:7001/${api}`
             } else {
-                url = `http://47.100.107.204:5018/api/${api}`
+                url = `http://fanyou.rank-tech.com/api/${api}`
             }
             request && request({
                 url,
@@ -65,7 +65,7 @@ export default {
                 },
                 url,
                 success: callback,
-                data
+                data: JSON.stringify(data)
             })
         }
 

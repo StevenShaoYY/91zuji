@@ -44,7 +44,7 @@
             <swiper-item>
                 <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
                     <div class="img-container">
-                        <img v-for="(item, index) of goodsDetail.description" :key="index" :data-index="index" class="desc-image" :src="item" background-size="cover"/>
+                        <img mode="widthFix" v-for="(item, index) of goodsDetail.description" :key="index" :data-index="index" class="desc-image" :src="item" background-size="cover"/>
                     </div>
                 </scroll-view>
             </swiper-item>
@@ -154,8 +154,8 @@
                 "id": this.$mp.query.id
             }
             let commentDto = {
-                "pageNum": 0,
-                "pageSize": 0,
+                "pageNum": 1,
+                "pageSize": 100,
                 "type": 0,
                 "valueId": this.$mp.query.id
             }
@@ -175,7 +175,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 155;
+                        const calc = clientHeight * rpxR - 170;
                         this.winHeight = calc
                         console.log(clientHeight)
                         console.log(this.winHeight)
@@ -424,6 +424,9 @@
 
 
 <style scoped lang="scss">
+    .container {
+        background-color: #ffffff;
+    }
     .tab-list {
         display: flex;
         height: 70rpx;
@@ -452,6 +455,7 @@
     }
     .header {
         width: 692rpx;
+        background-color: #ffffff;
         // height: 700rpx;
         margin-left: 29rpx;
         border: 1px solid #FAFAFA;
@@ -561,11 +565,13 @@
     .img-container {
         margin-top: 20rpx;
         width: 750rpx;
+        font-size: 0rpx;
     }
     .desc-image {
         width: 750rpx;
-        margin-top:-8rpx;
-        height: 900rpx;
+        // height: auto;
+        // margin-top:-8rpx;
+        // height: 900rpx;
     }
     .comment-container {
         width: 692rpx;
@@ -701,11 +707,13 @@
         height: 32rpx;
         position: absolute;
         right: 33rpx;
-        bottom: 0;
+        // bottom: 0;
+        display:inline-block;
+
     }
     .fa-qa .img{
         width: 32rpx;
-        height: 32rpx
+        height: 32rpx;
     }
     .yiwao-container .sub {
         color:#959595;
