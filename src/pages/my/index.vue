@@ -20,19 +20,19 @@
                 <div class="set-text">我的订单</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </navigator>
-            <navigator class="my-set-container">
+            <navigator class="my-set-container" url="/pages/mycollect/index">
                 <img class="icon" src="/static/images/icon_collect_mine.png" alt="">
                 <div class="set-text">我的收藏</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </navigator>
-            <navigator class="my-set-container">
+            <navigator class="my-set-container" url="/pages/mycomment/index">
                 <img class="icon" src="/static/images/icon_comment_mine.png" alt="">
                 <div class="set-text">我的评论</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </navigator>
         </div>
         <div class="section">
-            <navigator class="my-set-container">
+            <navigator class="my-set-container" url="/pages/helper/index">
                 <img class="icon" src="/static/images/icon_question_mine.png" alt="">
                 <div class="set-text">帮助中心</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
@@ -90,6 +90,7 @@
    .img {
        border-radius: 20rpx;
        width: 692rpx;
+       height: 400rpx;
    }
    .avata-container {
        width: 150rpx;

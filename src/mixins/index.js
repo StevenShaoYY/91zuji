@@ -34,6 +34,9 @@ export default {
             })
         },
         POST(api, data, callback, type) {
+            var appInstance = getApp()
+            let globalData = appInstance.globalData;
+            console.log(appInstance)
             let {
                 platform
             } = this.$mp || {},
@@ -53,15 +56,20 @@ export default {
                     break;
             }
             if (type === 'user') {
-                url = `http://fanyou.rank-tech.com:7001/${api}`
+                url = `http://fanyou.rank-tech.com:7002/user/${api}`
             } else {
-                url = `http://fanyou.rank-tech.com:5018/${api}`
+                url = `http://fanyou.rank-tech.com:7002/mall/${api}`
                 // url = `http://47.100.107.204:5018/api/${api}`
             }
             request && request({
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json;charset=UTF-8'
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    'ACCESS_TOKEN': '84c672d4d2ac493a9dda1aebdac5cb4b'
+                },
+                header: {
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    'ACCESS_TOKEN': '84c672d4d2ac493a9dda1aebdac5cb4b'
                 },
                 url,
                 success: callback,

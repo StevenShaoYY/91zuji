@@ -16,7 +16,10 @@ export default {
             'pages/goodsDetail/index',
             'pages/finaceques/index',
             'pages/category/index',
-            'pages/my/index'
+            'pages/my/index',
+            'pages/helper/index',
+            'pages/mycollect/index',
+            'pages/mycomment/index'
         ],
         window: {
             backgroundTextStyle: 'light',

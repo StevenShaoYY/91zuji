@@ -6,7 +6,8 @@
     },
     globalData() {
       return {
-        a: 100
+        a: 100,
+        accessToken: '111'
       }
     }
   }

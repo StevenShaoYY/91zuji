@@ -32,8 +32,8 @@
                 topic: [],
                 showLoading: 'hide',
                 pageData: {
-                    "pageNum": 0,
-                    "pageSize": 0
+                    "pageNum": 1,
+                    "pageSize": 10
                 },
                 scrollX: true
             }
@@ -56,7 +56,7 @@
                 }
                 this.topic = result
             });
-            this.POST('/api/mallCategory/list', this.pageData, res => {
+            this.POST('api/mallCategory/list', this.pageData, res => {
                 let result = res.data.result;
                 for (let item of result) {
                     item.categoryUrl =  `/pages/category/index?id=${item.id}&type=category`
