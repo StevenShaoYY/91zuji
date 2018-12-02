@@ -19,7 +19,10 @@ export default {
             'pages/my/index',
             'pages/helper/index',
             'pages/mycollect/index',
-            'pages/mycomment/index'
+            'pages/mycomment/index',
+            'pages/addressManage/index',
+            'pages/placeOrder/index',
+            'pages/xieyi/index'
         ],
         window: {
             backgroundTextStyle: 'light',

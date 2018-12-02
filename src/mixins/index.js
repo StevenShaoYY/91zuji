@@ -1,4 +1,3 @@
-
 export default {
     methods: {
         jump(to) {
@@ -6,22 +5,22 @@ export default {
             //     this.$router.push(to)
             // }
         },
-        GET (api, callback, type) {
+        GET(api, callback, type) {
             let { platform } = this.$mp || {},
-                request = ()=>{}
+                request = () => {}
             let url = ''
-            switch(platform) {
+            switch (platform) {
                 case 'wechat':
                     request = wx && wx.request
-                break;
+                    break;
                 case 'alipay':
                     request = my && my.httpRequest
-                break;
+                    break;
                 case 'swan':
                     request = swan && swan.request
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
             if (type === 'user') {
                 url = `http://fanyou.rank-tech.com:7001/${api}`
@@ -36,7 +35,7 @@ export default {
         POST(api, data, callback, type) {
             var appInstance = getApp()
             let globalData = appInstance.globalData;
-            console.log(appInstance)
+            let accToken = globalData.accessToken
             let {
                 platform
             } = this.$mp || {},
@@ -59,17 +58,17 @@ export default {
                 url = `http://fanyou.rank-tech.com:7002/user/${api}`
             } else {
                 url = `http://fanyou.rank-tech.com:7002/mall/${api}`
-                // url = `http://47.100.107.204:5018/api/${api}`
+                    // url = `http://47.100.107.204:5018/api/${api}`
             }
             request && request({
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=UTF-8',
-                    'ACCESS_TOKEN': '84c672d4d2ac493a9dda1aebdac5cb4b'
+                    'ACCESS_TOKEN': accToken
                 },
                 header: {
                     'Content-Type': 'application/json;charset=UTF-8',
-                    'ACCESS_TOKEN': '84c672d4d2ac493a9dda1aebdac5cb4b'
+                    'ACCESS_TOKEN': accToken
                 },
                 url,
                 success: callback,

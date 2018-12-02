@@ -78,6 +78,7 @@
 
 <style scoped lang="scss">
    .wrapper{
+    font-family:microsoft yahei;
        background-color: #fff;
        min-height: 100%;
    }

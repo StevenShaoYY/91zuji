@@ -100,15 +100,15 @@
                         <div @click="finaceSelect(1)" :class="goodsDetail.finaceList[1].checked ? 'selected value' : 'value'" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==true">分{{finace}}期&nbsp&nbsp|&nbsp&nbsp每期¥{{goodsDetail.finaceList[1].amount}}</div>
                     </div>
                 </div>
-                <div class="startOrder">
+                <div @click="placeOrder" class="startOrder">
                     开始下单
                 </div>
             </div>
         </div>
         <view class="bottom-btn">
             <view class="l-collect" >
-                <img v-if="goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_current.png"/>
-                <img v-if="!goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_normal.png"/>
+                <img @click="collect(false)" v-if="goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_current.png"/>
+                <img @click="collect(true)" v-if="!goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_normal.png"/>
             </view>
             <view @click="showDialog" class="select-guige">选择规格</view>
         </view>
@@ -242,6 +242,56 @@
             });
         },
         methods: {
+            toast(str) {
+                if(this.$mp.platform === 'alipay') {
+                    my.showToast({
+                        type: 'none',
+                        content: str,
+                        duration: 3000,
+                        success: () => {
+                            console.log('success')
+                        },
+                    });
+                } else {
+                    wx.showToast({
+                        title: str,
+                        icon: 'none',
+                        duration: 2000
+                    })
+                }
+            },
+            placeOrder() {
+                let finaceList = this.goodsDetail.finaceList
+                let finaceSelected = false
+                let proGuige = this.isCheckedAllSpec()
+                for (let i in finaceList) {
+                    if (finaceList[i].checked) {
+                        finaceSelected = i
+                    }
+                }
+                
+                if (proGuige === false) {
+                    this.toast('请选择规格')
+                    return
+                }
+                if(this.fenqiSelectFlag === false) {
+                    this.toast('请选择租期')
+                    return
+                }
+                if(finaceSelected === false) {
+                    this.toast('请选择付款方式')
+                    return
+                }
+                if(this.$mp.platform === 'alipay') {
+                    my.navigateTo({
+                        url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                    })
+                } else {
+                    wx.navigateTo({
+                       url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                    })
+                }
+            },
             switchTabBySwiper (e) {
                 this.activeItem = e.detail.current
             },
@@ -399,7 +449,8 @@
                     this.selectGoods.rentPrice = sp.financeRespDTOList[this.hasRentSelected].price
                     this.fenqiSelectFlag = true
                     this.selectGoods.goodsPrice = sp.price
-                    this.finace = this.goodsDetail.finaceList[1].dataList[this.hasRentSelected]
+                    if(this.goodsDetail.finaceList[1])
+                        this.finace = this.goodsDetail.finaceList[1].dataList[this.hasRentSelected]
                 } else if (this.isCheckedAllSpec()) {
                     let sp = this.getSelectProduct(this.isCheckedAllSpec())
                     this.selectGoods.goodsPrice = sp.price
@@ -415,9 +466,24 @@
                     }
                     list[id].checked = true
                 }
-               
+            },
+            collect(flag) {
+                let dto = {
+                    "type": 0,
+                    "valueId": this.$mp.query.id
+                }
+                if(flag) {
+                    this.POST('api/mallCollect/add', dto, res => {
+                        this.toast('收藏成功')
+                        this.goodsDetail.isCollect = true
+                    });
+                } else {
+                    this.POST('api/mallCollect/delete', dto, res => {
+                        this.toast('取消收藏成功')
+                        this.goodsDetail.isCollect = false
+                    });
+                }
             }
-
         }
     }
 </script>
@@ -426,6 +492,7 @@
 <style scoped lang="scss">
     .container {
         background-color: #ffffff;
+        font-family:microsoft yahei;
     }
     .tab-list {
         display: flex;
@@ -477,6 +544,7 @@
     .goods-title {
         font-weight: 700;
         margin-left: 30rpx;
+        margin-right: 30rpx;
         margin-top: 20rpx;
     }
     .goods-price-container {
@@ -626,6 +694,7 @@
         color: #FF6F00;
         margin-top: 160rpx;
         margin-left: 20rpx;
+        margin-right: 20rpx;
         font-weight: 700;
         font-size: 32rpx;
     }

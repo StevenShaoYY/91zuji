@@ -105,6 +105,10 @@
         url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.ttf') format('truetype'),
         url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.svg#iconfont') format('svg');
     }
+    .wrapper {
+        background-color: #ffffff;
+        font-family:microsoft yahei;
+    }
     .iconfont {
         font-family: "iconfont" !important;
     }

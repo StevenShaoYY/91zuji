@@ -53,6 +53,7 @@
 
 <style scoped lang="scss">
 .wrapper{
+    font-family:microsoft yahei;
     font-size: 26rpx;
     margin-left: 26rpx;
     width: 692rpx;

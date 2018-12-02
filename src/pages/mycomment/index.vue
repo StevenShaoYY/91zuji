@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div class="comment-container has-comment" v-if="commentList.length>0">
-            <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
+            <comment-card2 v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card2>
         </div>
         <div class="comment-container no-comment-container" v-if="commentList.length==0">
             <div class="no-comment">暂无评论</div>
@@ -11,12 +11,12 @@
 
 <script>
     import mixins from '../../mixins'
-    import CommentCard from '../../components/commentCard.vue';
+    import CommentCard2 from '../../components/commentCard2.vue';
     export default {
         mpType: 'page', 
         mixins: [mixins], 
         components: {
-            'comment-card': CommentCard
+            'comment-card2': CommentCard2
         },
         data () {
             return {
@@ -61,6 +61,7 @@
     //     line-height: 30rpx;
     // }
     .comment-container {
+        font-family:microsoft yahei;
         width: 692rpx;
         min-height: 95vh;
         margin-left: 29rpx;
@@ -70,6 +71,7 @@
         box-shadow: 2rpx 2rpx 50rpx #cccccc;
     }
     .no-comment-container {
+        font-family:microsoft yahei;
         display: flex;
         justify-content: center;
         flex-direction: column;
