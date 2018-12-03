@@ -446,14 +446,14 @@
             changeAll() {
                 if (this.hasRentSelected!==false && this.isCheckedAllSpec()) {
                     let sp = this.getSelectProduct(this.isCheckedAllSpec())
-                    this.selectGoods.rentPrice = sp.financeRespDTOList[this.hasRentSelected].price
+                    this.selectGoods.rentPrice = sp.financeRespDTOList[this.hasRentSelected].price.toFixed(2)
                     this.fenqiSelectFlag = true
-                    this.selectGoods.goodsPrice = sp.price
+                    this.selectGoods.goodsPrice = sp.price.toFixed(2)
                     if(this.goodsDetail.finaceList[1])
                         this.finace = this.goodsDetail.finaceList[1].dataList[this.hasRentSelected]
                 } else if (this.isCheckedAllSpec()) {
                     let sp = this.getSelectProduct(this.isCheckedAllSpec())
-                    this.selectGoods.goodsPrice = sp.price
+                    this.selectGoods.goodsPrice = sp.price.toFixed(2)
                 }
             },
             finaceSelect(id) {

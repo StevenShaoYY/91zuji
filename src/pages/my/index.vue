@@ -20,7 +20,7 @@
                 <div class="set-text">地址管理</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </navigator>
-            <navigator class="my-set-container">
+            <navigator class="my-set-container" url="/pages/orderList/index">
                 <img class="icon" src="/static/images/tab_order_current.png" alt="">
                 <div class="set-text">我的订单</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
@@ -79,6 +79,7 @@
 <style scoped lang="scss">
    .wrapper{
        background-color: #fff;
+       font-family:microsoft yahei;
    }
    .section {
         width: 692rpx;

@@ -7,7 +7,7 @@
         <div class="tab-container">
           <div class="sub-item" :class="colorList[index]" v-for="(item, index) of productItem.tagList" :key="index">{{item}}</div>
         </div>
-        <div class="price">¥{{productItem.rentPrice}}<span class="span">/{{productItem.periodUnit}}</span></div>
+        <div class="price">¥{{productItem.rentPrice.toFixed(2)}}<span class="span">/{{productItem.periodUnit}}</span></div>
       </div>
     </navigator>
   </div>

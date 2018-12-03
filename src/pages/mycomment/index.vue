@@ -37,7 +37,6 @@
                 }
                 this.POST('comment/userList', commentDto, res => {
                     let result = res.data.result;
-                    console.log(result)
                     this.commentList = result.list;
                     if (this.$mp.platform === 'alipay') {
                         my.stopPullDownRefresh()

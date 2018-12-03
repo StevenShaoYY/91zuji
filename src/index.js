@@ -22,7 +22,9 @@ export default {
             'pages/mycomment/index',
             'pages/addressManage/index',
             'pages/placeOrder/index',
-            'pages/xieyi/index'
+            'pages/xieyi/index',
+            'pages/orderDetail/index',
+            'pages/orderList/index'
         ],
         window: {
             backgroundTextStyle: 'light',

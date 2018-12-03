@@ -7,7 +7,8 @@
         <div class="tab-container">
           <div class="sub-item" v-for="(item, index) of product.descList" :key="index">{{item}}</div>
         </div>
-        <div class="price">商品价值：<span class="span">¥{{product.price}}</span></div>
+        <div v-if="product.price" class="price">商品价值：<span class="span">¥{{product.price.toFixed(2)}}</span></div>
+        <div v-if="product.totalRent" class="price">租金总额：<span class="span">¥{{product.totalRent.toFixed(2)}}</span></div>
       </div>
     </div>
   </div>
@@ -74,9 +75,6 @@
               type: Object,
               default: {}
           },
-        },
-        created() {
-            console.log(this.product.picUrl)
         },
         data () {
             return {
