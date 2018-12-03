@@ -1,32 +1,23 @@
 <template>
-    <view class="container">
+    <div class="container">
         <ul class="tab-list">
             <li class="ta-li" v-for="(item,index) of tabList" :key="index" :class="{'active':index==activeItem}" @click="switchTab(index)">
             {{item.remark}}
             </li>
         </ul>
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
-            <swiper-item>
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    
-                </scroll-view>
-            </swiper-item>
-            <swiper-item>
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    
-                </scroll-view>
-            </swiper-item>
-            <swiper-item>
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    <!-- <div class="comment-container has-comment" v-if="commentList.length>0">
-                        <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
+            <swiper-item v-for="(item,index) of detailList" :key="index">
+                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}" >
+                    <div class="comment-container has-comment" v-if="item.data.length>0">
+                        <order-card v-for="(item1, index1) of item.data" :key="index1" :data="item1"></order-card>
                     </div>
-                    <div class="comment-container no-comment-container" v-if="commentList.length==0">
-                        <div class="no-comment">暂无评论</div>
-                    </div> -->
+                    <div class="comment-container no-comment-container" v-if="item.data.length==0">
+                        <div class="no-comment">暂无订单</div>
+                    </div>
                 </scroll-view>
             </swiper-item>
         </swiper>
+    </div>
 </template>
 
 <script>
@@ -42,7 +33,20 @@
             return {
                 tabList: [],
                 activeItem: 0,
-                detailList: {},
+                detailList: [
+                    {
+                        id:'',
+                        data: []
+                    },
+                    {
+                        id:'',
+                        data: []
+                    },
+                    {
+                        id:'',
+                        data: []
+                    },
+                ],
                 winHeight: ''
             }
         },
@@ -72,17 +76,20 @@
         },
         onPullDownRefresh() {
             let sta = this.tabList[this.activeItem].status
-            this.getOrderByStatus(sta)
+            this.getOrderByStatus(sta, this.activeItem)
         },
         methods: {
             getOrderData () {
                 this.POST('api/tradeOrder/statusList', '', res => {
                     let result = res.data.result;
                     this.tabList = result
-                    this.getOrderByStatus(this.tabList[0].status)
+                    for(let i in this.tabList) {
+                        this.detailList[i].id = this.tabList[i].status
+                    }
+                    this.getOrderByStatus(this.tabList[0].status, 0)
                 });
             },
-            getOrderByStatus(sta) {
+            getOrderByStatus(sta ,index) {
                 let dto = {
                     "orderStatus": sta,
                     "pageNum": 0,
@@ -90,7 +97,7 @@
                 }
                 this.POST('api/tradeOrder/list', dto, res => {
                     let result = res.data.result;
-                    this.detailList[sta] = result
+                    this.detailList[index].data = result
                     if (this.$mp.platform === 'alipay') {
                         my.stopPullDownRefresh()
                     } else {
@@ -99,16 +106,17 @@
                 });
             },
             switchTabBySwiper (e) {
-                console.log(11111)
                 this.activeItem = e.detail.current
                 let sta = this.tabList[this.activeItem].status
-                this.getOrderByStatus(sta)
+                this.getOrderByStatus(sta, this.activeItem)
             },
             switchTab (index) {
-                console.log(2222)
                 this.activeItem = index
-                // let sta = this.tabList[this.activeItem].status
-                // this.getOrderByStatus(sta)
+                if (this.$mp.platform === 'alipay') {
+                    let sta = this.tabList[this.activeItem].status
+                    this.getOrderByStatus(sta, this.activeItem)
+                }
+                
             }
         }
     }

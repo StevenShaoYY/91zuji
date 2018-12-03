@@ -9,6 +9,7 @@
         </div>
         <div v-if="product.price" class="price">商品价值：<span class="span">¥{{product.price.toFixed(2)}}</span></div>
         <div v-if="product.totalRent" class="price">租金总额：<span class="span">¥{{product.totalRent.toFixed(2)}}</span></div>
+        <div v-if="product.orderSn" class="price">订单编号：<span class="span">¥{{product.orderSn}}</span></div>
       </div>
     </div>
   </div>

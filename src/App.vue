@@ -3,6 +3,14 @@
   export default {
     mpType: 'app',
     onLaunch() {
+      my.getAuthCode({
+        scopes: 'auth_user',
+        success: (res) => {
+          my.alert({
+            content: res.authCode,
+          });
+        },
+      });
     },
     globalData() {
       return {

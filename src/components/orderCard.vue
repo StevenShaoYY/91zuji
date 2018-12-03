@@ -1,19 +1,25 @@
 <template>
   <div class="wrapper">
-    <div class="first-section">
-      <img class="image" :src="commentItem.goodsImage" background-size="cover"/>
-      <div class="inner-container">
-        <div class="user-text">{{commentItem.goodsName}}</div>
-        <star :starNum="4"></star>
+    <div>
+      {{data.orderRemark}}
+    </div>
+    <div>
+      <order-product :product="productSub"></order-product>
+    </div>
+    <div>
+      <div>{{data.note}}</div>
+      <div>{{data.statusTime}}</div>
+    </div>
+    <div class="bottom-container">
+      <div class="btn-container">
+        <div v-for="item of data.operationList" :key="item.id">
+          <div v-if="item.id==1" class="btn sty1">立即付款</div>
+            <div v-if="item.id==3" class="btn sty1">归还设备</div>
+            <div v-if="item.id==2" @click="cancleOrder" class="btn sty2">取消订单</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="second-section">
-      {{commentItem.content}}
-    </div>
-    <div class="third-section">
-      {{commentItem.addTime}}
-    </div>
-  </div>
 </template>
 <style scoped>
     .wrapper{
@@ -52,24 +58,34 @@
     }
 </style>
 <script>
-import Star from './star.vue';
+import OrderProduct from './orderProduct.vue';
     export default {
         props:{
-          commentItem: {
+          data: {
               type: Object,
               default: {}
           },
         },
         components: {
-          'star': Star
+          'order-product': OrderProduct
+        },
+        created() {
+          this.productSub={
+            picUrl: this.data.picUrl,
+            descList:this.data.specifications,
+            name:this.data.goodsName,
+            orderSn:this.data.orderSn,
+          }
         },
         data () {
             return {
+              productSub:{}
             }
         },
         methods: {
-            jumpWeb (_url) {
-            }
+          cancleOrder() {
+            let order = this.data.orderId
+          }
         }
     }
 </script>

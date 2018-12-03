@@ -4,7 +4,7 @@
       <img class="image" :src="commentItem.userAvatar" background-size="cover"/>
       <div class="inner-container">
         <div class="user-text">{{commentItem.user}}</div>
-        <star :starNum="4"></star>
+        <star :starNum="commentItem.star"></star>
       </div>
     </div>
     <div class="second-section">
