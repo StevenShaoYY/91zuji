@@ -9,9 +9,9 @@
             <swiper-item v-for="(item,index) of detailList" :key="index">
                 <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}" >
                     <div class="comment-container has-comment" v-if="item.data.length>0">
-                        <order-card v-for="(item1, index1) of item.data" :key="index1" :data="item1"></order-card>
+                        <order-card v-for="(item1, index1) of item.data" :key="index1" :data="item1" @fresh="refreshPage"></order-card>
                     </div>
-                    <div class="comment-container no-comment-container" v-if="item.data.length==0">
+                    <div class="no-order-container" v-if="item.data.length==0">
                         <div class="no-comment">暂无订单</div>
                     </div>
                 </scroll-view>
@@ -57,7 +57,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 110;
+                        const calc = clientHeight * rpxR - 140;
                         this.winHeight = calc
                     }
                 });
@@ -67,7 +67,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 110;
+                        const calc = clientHeight * rpxR - 140;
                         this.winHeight = calc
                     }
                 });
@@ -79,6 +79,10 @@
             this.getOrderByStatus(sta, this.activeItem)
         },
         methods: {
+            refreshPage() {
+                let sta = this.tabList[this.activeItem].status
+                this.getOrderByStatus(sta ,this.activeItem)
+            },
             getOrderData () {
                 this.POST('api/tradeOrder/statusList', '', res => {
                     let result = res.data.result;
@@ -127,6 +131,7 @@
     .wrapper{
         background-color: #fff;
         font-family:microsoft yahei;
+        position: relative;
     }
     .tab-list {
         display: flex;
@@ -145,15 +150,22 @@
         width: 200rpx;
         display: flex;
         justify-content: center;
-        border: 1rpx solid #FFFFFF;
+        // border: 1rpx solid #FFFFFF;
     }
     .tab-list .active {
       border: 1rpx solid #f6f6f6;
       box-shadow: 4rpx 4rpx 20rpx #cccccc;
       color:#1b1b1b;
     }
+    .no-order-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #a8a8a8;
+        font-size: 28rpx;
+        height: 100%;
+    }
     .swiper-container {
-        width: 692rpx;
-        margin-left: 29rpx;
+        margin-top: 30rpx;
     }
 </style>

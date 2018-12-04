@@ -50,40 +50,20 @@
         <div class="text"><span>点击确认下单代表已同意</span><navigator url="/pages/xieyi/index" class="xieyi">《用户服务及租赁协议》</navigator></div>
         <div @click="submit" class="botton-btn">确认下单</div>
     </div>
-    <div class="pay-container" v-if="showPay">
-        <div class="pay-main">
-            <div class="cot-1">
-                确认付款
-                <img @click="closePay" class="icon-cloce" src="/static/images/btn_close_popup.png"/>
-            </div>
-            <div class="cot-2">
-                <div class="text1">¥{{payInfo.amount}}</div>
-                <div class="text2">{{payInfo.note}}</div>
-            </div>
-            <div class="cot-3" v-if="$mp.platform=='alipay'">
-                <img class="icon-zfb" src="/static/images/icon_zhifubao_pay.png"/>
-                <div class="text">支付宝</div>
-                <img class="icon-check" src="/static/images/btn_choose_pay.png"/>
-            </div>
-            <div class="cot-3" v-if="$mp.platform=='wechat'">
-                <img class="icon-zfb" src="/static/images/icon_wechat_pay.png"/>
-                <div class="text">微信</div>
-                <img class="icon-check" src="/static/images/btn_choose_pay.png"/>
-            </div>
-            <div @click="payOrder" class="botton-btn">立即付款</div>
-        </div>
-    </div>
+    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay"></pay-pop>
 </div>
 </template>
 
 <script>
     import mixins from '../../mixins'
     import OrderProduct from '../../components/orderProduct.vue';
+    import PayPop from '../../components/payPop.vue';
     export default {
         mpType: 'page', 
         mixins: [mixins], 
         components: {
-            'order-product': OrderProduct
+            'order-product': OrderProduct,
+            'pay-pop': PayPop
         },
         data () {
             return {
@@ -99,8 +79,7 @@
                     emergencyRelation: ''
                 },
                 orderId: '',
-                payInfo: {},
-                showPay: false
+                showPopFlag:false
             }
         },
         created () {
@@ -214,23 +193,12 @@
                     let result = res.data.result;
                     if (result.orderId){
                         this.orderId = result.orderId
-                        let ddto = {
-                            'orderId': this.orderId
-                            // 'orderId': 503
-                        }
-                        this.POST('api/tradeOrder/payAtOnce', ddto, res => {
-                            let result = res.data.result;
-                            result.amount = result.amount.toFixed(2)
-                            this.showPay = true
-                            this.payInfo = result
-                        });
+                        this.showPopFlag = true
                     }
                 });
             },
-            payOrder() {
-                console.log(this.orderId)
-            },
             closePay() {
+                this.showPopFlag = false
                 let url = `/pages/orderDetail/index?id=${this.orderId}`
                 if(this.$mp.platform === 'alipay') {
                     my.redirectTo({
@@ -395,77 +363,5 @@
     .bottom-container .xieyi {
         color: #ff7000;
         display: inline;
-    }
-    .pay-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 106;
-        background: rgba(0, 0, 0, 0.5);
-    }
-    .pay-main {
-        position: absolute;
-        bottom: 0;
-        width: 100vw;
-        z-index: 888;
-        background-color: #fff;
-        border-radius: 50rpx 50rpx 0 0;
-    }
-    .pay-main .cot-1 {
-        height: 100rpx;
-        line-height: 100rpx;
-        text-align: center;
-        font-size: 30rpx;
-        border-bottom: 1px solid #e6e6e6
-    }
-    .pay-main .icon-cloce {
-        width: 48rpx;
-        height: 48rpx;
-        position: absolute;
-        right: 40rpx;
-        top: 26rpx;
-    }
-    .pay-main .cot-2 {
-        text-align: center;
-        margin: 0 50rpx;
-        padding: 20rpx 50rpx;
-        border-bottom: 1px solid #e6e6e6
-    }
-    .pay-main .cot-2 .text1{
-        font-size: 70rpx;
-        font-weight: 700;
-        line-height: 100rpx;
-    }
-    .pay-main .cot-2 .text2{
-        font-size: 30rpx;
-        font-weight: 200;
-        color: #999999;
-        line-height: 80rpx;
-    }
-    .pay-main .cot-3 {
-        height: 130rpx;
-        line-height: 130rpx;
-        margin: 0 50rpx;
-        border-bottom: 1px solid #e6e6e6;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 90rpx;
-    }
-    .pay-main .cot-3 .text{
-        flex: 1;
-        font-size: 28rpx;
-        margin-left: 30rpx;
-    }
-    .pay-main .icon-zfb{
-        width: 83rpx;
-        height: 74rpx;
-    }
-    .pay-main .icon-check{
-        width: 69rpx;
-        height: 48rpx;
     }
 </style>

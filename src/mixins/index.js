@@ -35,6 +35,7 @@ export default {
         POST(api, data, callback, type) {
             var appInstance = getApp()
             let globalData = appInstance.globalData;
+            console.log(globalData)
             let accToken = globalData.accessToken
             let {
                 platform
@@ -54,11 +55,12 @@ export default {
                 default:
                     break;
             }
+            let baseUrl = 'http://fanyou.rank-tech.com:7002'
+            // let baseUrl = 'http://192.168.0.220:9999'
             if (type === 'user') {
-                url = `http://fanyou.rank-tech.com:7002/user/${api}`
+                url = `${baseUrl}/user/${api}`
             } else {
-                url = `http://fanyou.rank-tech.com:7002/mall/${api}`
-                    // url = `http://47.100.107.204:5018/api/${api}`
+                url = `${baseUrl}/mall/${api}`
             }
             request && request({
                 method: 'POST',
