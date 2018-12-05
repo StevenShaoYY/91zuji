@@ -1,211 +1,130 @@
 <template>
 <div>
     <scroll-view scroll-y=true class="wrapper">
-        <div class="address-container">
-            <img class="icon" src="/static/images/icon_location_address.png" alt="">
-            <div class="set-text">
-                <div class="text1">{{orderDetail.address}}</div>
-                <div class="text2">{{orderDetail.consignee}}&nbsp&nbsp&nbsp{{orderDetail.mobile}}</div>
-            </div>
+        <div class="header-container">
+            <p class="header-p1">到期归还</p>
+            <p class="header-p2">未租满1个月归还需缴纳一个月的租金</p>
         </div>
         <div class="product-detail-container">
             <order-product :product="productSub"></order-product>
         </div>
-        <div class="finace-container" v-if="finace.feeType==1">
-            <div>意外保障<span class="span-l">(一次性付清)</span></div>
-            <div>¥{{finace.actualPrice.toFixed(2)}}</div>
-        </div>
-        <div class="finace-container" v-if="finace.feeType==2">
-            <div>意外保障<span class="span-l">(分期支付)</span></div>
-            <div>每期¥{{finace.actualPrice.toFixed(2)}}</div>
-        </div>
-        <div class="rent-container" v-if="orderDetail.periods">
+        <div class="rent-container" v-if="orderDetail.totalRentAmount">
             <div class="rent1">
-                <div class="sub">总租金</div>
-                <div>{{orderDetail.orderPrice.toFixed(2)}}</div>
-            </div>
-            <div class="rent1">
-                <div class="sub">月租金</div>
-                <div>{{orderDetail.periodPrice.toFixed(2)}}</div>
-            </div>
-            <div class="rent1">
-                <div class="sub">租期</div>
-                <div>共{{orderDetail.periods}}<span v-if="orderDetail.periodType==1">个月</span><span v-if="orderDetail.periodType==2">天</span><span v-if="orderDetail.periodType==3">周</span></div>
-            </div>
-        </div>
-        <div class="rent-container" v-if="orderDetail.periods">
-            <div class="rent1">
-                <div class="sub">总押金</div>
-                <div>{{orderDetail.deposit.toFixed(2)}}</div>
-            </div>
-            <div class="rent1">
-                <div class="sub">免押金</div>
-                <div>-{{orderDetail.freeDeposit.toFixed(2)}}</div>
-            </div>
-            <div class="rent1">
-                <div class="sub">实付押金</div>
-                <div>{{orderDetail.actualDeposit.toFixed(2)}}</div>
-            </div>
-            <div  class="remark-container" v-if="orderDetail.remark!=''"> 
-                <div class="text">备注信息：{{orderDetail.remark}}</div>
-            </div>
-        </div>
-        <div @click="wuliuShow" class="can-click-container wuliu">
-            物流信息
-            <img v-if="!wuliuFlag" class="icon" src="/static/images/btn_down_more.png" alt="">
-            <img v-if="wuliuFlag" class="icon" src="/static/images/btn_up_question.png" alt="">
-            <div v-if="wuliuFlag" class="click-content">
-                <div v-if="orderDetail.shipChannel">{{orderDetail.shipChannel}}：{{orderDetail.shipSn}}</div>
-                <div v-if="!orderDetail.shipChannel">暂无物流信息</div>
-            </div>
-        </div>
-        <div @click="deviceShow" class="can-click-container">
-            设备序列号
-            <img v-if="!deviceFlag" class="icon" src="/static/images/btn_down_more.png" alt="">
-            <img v-if="deviceFlag" class="icon" src="/static/images/btn_up_question.png" alt="">
-            <div v-if="deviceFlag" class="click-content">
-                <div v-if="orderDetail.deviceSerial&&orderDetail.deviceSerial.length>0">{{orderDetail.deviceSerial[0]}}</div>
-                <div v-if="!orderDetail.deviceSerial||orderDetail.deviceSerial.length==0">没有设备信息</div>
-            </div>
-        </div>
-        <div class="rent-container2">
-            <div class="rent1">
-                <div class="sub">订单编号</div>
-                <div>{{orderDetail.orderSn}}</div>
-            </div>
-            <div class="rent1">
-                <div class="sub">下单时间</div>
-                <div>{{orderDetail.createTime}}</div>
-            </div>
-            <div class="rent1">
-                <div class="sub">起租时间</div>
+                <div class="sub">本单起租日期：</div>
                 <div>{{orderDetail.beginTime}}</div>
             </div>
             <div class="rent1">
-                <div class="sub">到期时间</div>
+                <div class="sub">本单到期日期：</div>
                 <div>{{orderDetail.endTime}}</div>
             </div>
             <div class="rent1">
-                <div class="sub">租赁协议</div>
-                <div><navigator url="/pages/xieyi/index" class="xieyi">《用户服务及租赁协议》</navigator></div>
+                <div class="sub">代缴租金总计：</div>
+                <div>¥{{orderDetail.totalRentAmount.toFixed(2)}}</div>
             </div>
         </div>
-        <div class="bottom-container">
-            <div class="status-text">{{orderDetail.orderStatusRemark}}</div>
-            <div class="btn-container">
-                <div v-for="item of orderDetail.operationList" :key="item.id">
-                    <div @click="payAtOnce" v-if="item.id==1" class="btn sty1">立即付款</div>
-                    <div v-if="item.id==3" class="btn sty1">归还设备</div>
-                    <div v-if="item.id==2" @click="cancleOrder" class="btn sty2">取消订单</div>
-                </div>
+        <div class="rent-container" v-if="orderDetail.totalRentAmount">
+            <div class="rent1">
+                <div class="sub">违约金：</div>
+                <div>¥{{orderDetail.penalAmount.toFixed(2)}}</div>
             </div>
+            <div class="rent1">
+                <div class="sub">逾期未缴总计：</div>
+                <div>¥{{orderDetail.overdueAmount.toFixed(2)}}</div>
+            </div>
+            <div class="rent1">
+                <div class="sub">总需补齐资金：</div>
+                <div>¥{{(orderDetail.penalAmount+orderDetail.overdueAmount).toFixed(2)}}</div>
+            </div>
+        </div>
+        <div class="text-container">
+            <p>1.我们收到货品后会检测,质检结果会同步到归还进度里,代缴金额的账号也会罗列在您个人中心的缴费计划里。</p> 
+            <p style="margin-top:20rpx">2.逾期或违约,或将影响您的芝麻信用。</p>
+        </div>
+        <div @click="nextStep" class="startOrder">
+            下一步
         </div>
     </scroll-view>
-    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay"></pay-pop>
 </div>
 </template>
 
 <script>
     import mixins from '../../mixins'
     import OrderProduct from '../../components/orderProduct.vue';
-    import PayPop from '../../components/payPop.vue';
     export default {
         mpType: 'page', 
         mixins: [mixins], 
         components: {
-            'order-product': OrderProduct,
-            'pay-pop': PayPop
+            'order-product': OrderProduct
         },
         data () {
             return {
                 productSub: {},
-                finace: {},
-                orderId: '',
-                payInfo: {},
                 orderDetail: {},
-                deviceFlag: false,
-                wuliuFlag: false,
-                showPopFlag: false
+                orderId: ''
             }
         },
         created () {
             this.orderId = this.$mp.query.id
-            this.getOrderDetail()
+            // this.getOrderDetail()
+            this.getOrderDetailTest()
         },
         methods: {
             getOrderDetail() {
-                this.POST('api/tradeOrder/detail', {"orderId": this.$mp.query.id}, res => {
+                this.POST('api/tradeOrder/backInfo', {"orderId": this.orderId}, res => {
                     let result = res.data.result;
                     this.orderDetail = result
                     let productSub = {}
                     productSub.name = result.tradeOrderGoodsRespDTO.goodsName
                     productSub.picUrl = result.tradeOrderGoodsRespDTO.picUrl
                     productSub.descList = result.tradeOrderGoodsRespDTO.specifications
-                    productSub.totalRent = result.actualPrice 
+                    productSub.totalRent = result.totalRentAmount 
                     this.productSub = productSub
-                    this.finace = result.tradeOrderAttachRespDTO
                 });
             },
-            toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
+            nextStep() {
+                if(this.$mp.platform == 'alipay') {
+                    my.navigateTo({
+                        url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}`
+                    })
+                    } else {
+                    wx.navigateTo({
+                        url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}`
                     })
                 }
             },
-            wuliuShow() {
-                this.wuliuFlag = !this.wuliuFlag
-            },
-            deviceShow() {
-                this.deviceFlag = !this.deviceFlag
-            },
-            payAtOnce() {
-                this.showPopFlag = true
-            },
-            closePay() {
-                this.showPopFlag = false
-            },
-            cancleOrder() {
-                if(this.$mp.platform == 'alipay') {
-                    my.confirm({
-                        title: '温馨提示',
-                        content: '确定要取消订单吗？',
-                        confirmButtonText: '取消订单',
-                        cancelButtonText: '暂不需要',
-                        success: (result) => {
-                            this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
-                                my.navigateBack({
-                                    delta: 1
-                                })                                
-                            });
+            getOrderDetailTest() {
+                    let result = {
+                        "tradeOrderId": 394,
+                        "isBacking": true,
+                        "tradeOrderGoodsRespDTO": {
+                        "goodsName": "iPhone7    国行三网通 99新",
+                        "specifications": [
+                            "金色",
+                            "32G"
+                        ],
+                        "picUrl": "http://rent-mall.oss-cn-beijing.aliyuncs.com/kvpn168xxo4glnyhm2n0.png"
                         },
-                    });
-                } else {
-                    wx.showModal({
-                        title: '温馨提示',
-                        content: '确定要取消订单吗？',
-                        confirmText: '取消订单',
-                        cancelText: '暂不需要',
-                        success: (result) => {
-                            this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
-                                wx.navigateBack({
-                                    delta: 1
-                                })                                
-                            });
-                        },
-                    });
-                }
+                        "totalRentAmount": 0.03,
+                        "beginTime": "2018-07-25",
+                        "endTime": "2018-10-25",
+                        "totalPayAmount": 0.01,
+                        "penalAmount": 0,
+                        "overdueAmount": 0,
+                        "totalRepayAmount": 0,
+                        "receiveName": "小北",
+                        "postCode": "310000",
+                        "mobile": "0571-86507022",
+                        "address": "杭州市萍水街 333 号御峰大厦 1922 室",
+                        "shipChannel": "xumin746854",
+                        "shipSn": "东风"
+                    }
+                    this.orderDetail = result
+                    let productSub = {}
+                    productSub.name = result.tradeOrderGoodsRespDTO.goodsName
+                    productSub.picUrl = result.tradeOrderGoodsRespDTO.picUrl
+                    productSub.descList = result.tradeOrderGoodsRespDTO.specifications
+                    productSub.totalRent = result.totalRentAmount 
+                    this.productSub = productSub
             }
         }
     }
@@ -217,74 +136,48 @@
         background-color: #ffffff;
         font-family:microsoft yahei;
     }
-    .address-container {
-        width: 652rpx;
-        height: 155rpx;
-        margin-left: 29rpx;
-        border: 1px solid #FAFAFA;
-        border-radius: 20rpx;
-        margin-top: 20rpx;
-        box-shadow: 2rpx 2rpx 15rpx #cccccc;
-        padding: 20rpx;
+    .header-container{
+        width: 750rpx;
+        height: 200rpx;
+        background: linear-gradient(to bottom right, #f24f18 , #ffc561);
+        color: #fff;
+        line-height: 60rpx;
         display: flex;
-        flex-direction: row;
-        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 30rpx;
+        padding-left: 30rpx;
     }
-    .address-container .icon{
-        width: 41rpx;
-        height: 48rpx;
-    }
-    .address-container .set-text{
-        width: 654rpx;
-        padding: 0 20rpx;
-    }
-    .address-container .set-text .text1{
-        font-size: 32rpx;
-        line-height: 60rpx;
-        color: #676767;
-    }
-    .address-container .set-text .text2{
-        font-size: 28rpx;
-        line-height: 60rpx;
-        color: #9D9D9D;
-    }
-    .address-container .right {
-       width: 17rpx;
-       height: 28rpx;
+    .header-container .header-p1 {
+        font-weight: 700;
     }
     .product-detail-container {
         width: 692rpx;
         margin-left: 29rpx;
-        margin-top: 15rpx;
-    }
-    .finace-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 692rpx;
-        margin-left: 29rpx;
-        font-size: 30rpx;
-        padding-bottom: 30rpx;
-        // border-bottom: 1px solid #E7E7E7
-    }
-    .finace-container .span-l {
-        color: #969696;
-        font-size: 26rpx;
+        border: 1px solid #FAFAFA;
+        border-radius: 20rpx;
+        margin-top: 20rpx;
+        height: 220rpx;
+        box-shadow: 2rpx 2rpx 15rpx #cccccc;
     }
     .rent-container {
         width: 692rpx;
         margin-left: 29rpx;
         font-size: 30rpx;
         padding: 20rpx 0;
-        border-top: 1px solid #f9f9f9
+        border: 1px solid #FAFAFA;
+        border-radius: 20rpx;
+        margin-top: 20rpx;
+        box-shadow: 2rpx 2rpx 15rpx #cccccc;
     }
     .rent-container .rent1{
         height: 50rpx;
         line-height: 50rpx;
+        padding: 0 30rpx;
         font-size: 30rpx;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: flex-start;
     }
     .rent-container .rent1 .sub {
         color: #969696;
@@ -299,42 +192,6 @@
         justify-content: flex-end;
         font-weight: 700;
         line-height: 50rpx;
-    }
-    .remark-container {
-        width: 632rpx;
-        border-radius: 20rpx;
-        background-color: #f7f7f7;
-        margin: 20rpx 0;
-        font-size: 26rpx;
-        padding: 30rpx 20rpx;
-        height: 90rpx;
-    }
-    .can-click-container {
-        // height: 90rpx;
-        line-height: 90rpx;
-        font-size: 30rpx;
-        padding: 0 29rpx;
-        border-bottom: 5px solid #f9f9f9;
-        position: relative;
-    }
-    .can-click-container .icon {
-        width: 27rpx;
-        height: 17rpx;
-        position: absolute;
-        right: 29rpx;
-        top: 35rpx;
-    }
-    .wuliu {
-        border-top: 5px solid #f9f9f9;
-    }
-    .can-click-container .click-content {
-        color: #969696;
-        font-size: 25rpx;
-        line-height: 30rpx;
-        padding: 20rpx 0 50rpx 0;
-    }
-    .xieyi{
-        color:#EF7000
     }
     .rent-container2 {
         width: 750rpx;
@@ -355,36 +212,23 @@
         font-size: 26rpx;
         padding-right: 30rpx;
     }
-    .bottom-container{
-        height: 100rpx;
-        line-height: 100rpx;
-        width: 692rpx;
-        margin: 0 29rpx;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    .bottom-container .status-text {
-        font-size: 28rpx;
-        color: #EF7000;
-    }
-    .bottom-container .btn-container {
-        display: flex;
-    }
-    .bottom-container .btn-container .btn {
+    .text-container {
         font-size: 26rpx;
-        line-height: 56rpx;
-        margin: 22rpx 15rpx;
-        padding: 0 13rpx;
-        border-radius: 8rpx;
+        margin: 30rpx;
     }
-    .btn-container .sty1 {
+    .startOrder{
         color: #fff;
-        background-color: #EF7000
-    }
-    .btn-container .sty2 {
-        color: #757575;
-        border: 1px solid #e0e0e0;
+        background-color: #FF6F00;
+        height: 80rpx;
+        border-radius: 40rpx;
+        text-align: center;
+        width: 692rpx;
+        margin-left: 29rpx;
+        line-height: 80rpx;
+        font-weight: 400;
+        font-size: 30rpx;
+        position: fixed;
+        bottom: 30rpx;
     }
 
 </style>

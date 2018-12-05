@@ -4,7 +4,7 @@
       <navigator class="more" :url="topic.topicMore">更多<span class="go">»</span></navigator>
       <div class="subtitle">{{topic.subtitle}}</div>
     </div>
-    <img class="img" :src="topic.picUrl" background-size="cover" />
+    <navigator :url="topic.topicMore"><img class="img" :src="topic.picUrl" background-size="cover" /></navigator>
     <section class="hotPro">
       <div class="hot-proc-title"><img class="hot-icon" src="/static/images/icon_hot_pro.png"/>热门商品</div>
       <div class="hot-proc-list">

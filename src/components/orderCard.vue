@@ -13,7 +13,7 @@
     <div class="bottom-container">
       <div v-for="item of data.operationList" :key="item.id">
         <div v-if="item.id==1" @click="payAtOnce" class="btn sty1">立即付款</div>
-        <div v-if="item.id==3" class="btn sty1">归还设备</div>
+        <div v-if="item.id==3" @click="returnOrder" class="btn sty1">归还设备</div>
         <div v-if="item.id==2" @click="cancleOrder" class="btn sty2">取消订单</div>
       </div>
     </div>
@@ -154,6 +154,17 @@
           closePay() {
             this.showPopFlag = false
           },
+          returnOrder() {
+            if(this.$mp.platform == 'alipay') {
+              my.navigateTo({
+                url: `/pages/returnOrder/index?orderId=${this.orderId}`
+              })
+            } else {
+              wx.navigateTo({
+                  url: `/pages/returnOrder/index?orderId=${this.orderId}`
+              })
+            }
+          }
         }
     }
 </script>

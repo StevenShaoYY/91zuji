@@ -74,34 +74,38 @@
                     <div class="p">¥{{selectGoods.rentPrice}}</div>
                     <div class="a">商品价值:¥{{selectGoods.goodsPrice}}</div>
                 </div>
-                <div class="spec-con">
-                    <div class="spec-item" v-for="(item, index) of goodsDetail.specificationList" :key="index" :data-index="index">
-                        <div class="name">{{item.name}}</div>
-                        <div class="values">
-                            <div :class="iitem.checked ? iitem.checked=='noexist'?'value unexist-value':'selected value' : 'value'"  @click="selectproduct" v-for="(iitem, iindex) of item.specificationLists" :key="iindex" :data-index="iindex" :data-name-id="iitem.name" :data-sername-id="iitem.serName">{{iitem.name}}</div>
+                <div class="center-container">
+                    <div class="spec-con">
+                        <div class="spec-item" v-for="(item, index) of goodsDetail.specificationList" :key="index" :data-index="index">
+                            <div class="name">{{item.name}}</div>
+                            <div class="values">
+                                <div :class="iitem.checked ? iitem.checked=='noexist'?'value unexist-value':'selected value' : 'value'"  @click="selectproduct" v-for="(iitem, iindex) of item.specificationLists" :key="iindex" :data-index="iindex" :data-name-id="iitem.name" :data-sername-id="iitem.serName">{{iitem.name}}</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="name">{{goodsDetail.financeSpecificationList[0].name}}</div>
+                            <div class="values">
+                                <div :class="item2.checked ? 'selected value' : 'value'"  @click="selectRentTime" v-for="(item2, index2) of goodsDetail.financeSpecificationList[0].goodsFinanceSpecificationLists" :key="index2" :data-index="index2" :data-name-id="item2.name">{{item2.name}}</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="spec-item">
-                        <div class="name">{{goodsDetail.financeSpecificationList[0].name}}</div>
-                        <div class="values">
-                            <div :class="item2.checked ? 'selected value' : 'value'"  @click="selectRentTime" v-for="(item2, index2) of goodsDetail.financeSpecificationList[0].goodsFinanceSpecificationLists" :key="index2" :data-index="index2" :data-name-id="item2.name">{{item2.name}}</div>
+                    <div v-if="goodsDetail.finaceList.length>0" class="yiwao-container">
+                        <div>意外保障<span class="sub">什么是意外保障？</span>
+                            <navigator class="fa-qa" url="/pages/finaceques/index" >
+                                <img class="img" src="/static/images/question.png" background-size="cover" />
+                            </navigator>
+                        </div>
+                        <div class="yiwai-select">
+                            <div @click="finaceSelect(0)" :class="goodsDetail.finaceList[0].checked ? 'selected value first' : 'value first'">一次性支付&nbsp&nbsp|&nbsp&nbsp¥{{goodsDetail.finaceList[0].amount}}</div>
+                            <div class="unexist-value value" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==false">分期信息选择规格后显示</div>
+                            <div @click="finaceSelect(1)" :class="goodsDetail.finaceList[1].checked ? 'selected value' : 'value'" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==true">分{{finace}}期&nbsp&nbsp|&nbsp&nbsp每期¥{{goodsDetail.finaceList[1].amount}}</div>
                         </div>
                     </div>
                 </div>
-                <div v-if="goodsDetail.finaceList.length>0" class="yiwao-container">
-                    <div>意外保障<span class="sub">什么是意外保障？</span>
-                        <navigator class="fa-qa" url="/pages/finaceques/index" >
-                            <img class="img" src="/static/images/question.png" background-size="cover" />
-                        </navigator>
+                <div class="bottom-btn-container">
+                    <div @click="placeOrder" class="startOrder">
+                        立即租赁
                     </div>
-                    <div class="yiwai-select">
-                        <div @click="finaceSelect(0)" :class="goodsDetail.finaceList[0].checked ? 'selected value first' : 'value first'">一次性支付&nbsp&nbsp|&nbsp&nbsp¥{{goodsDetail.finaceList[0].amount}}</div>
-                        <div class="unexist-value value" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==false">分期信息选择规格后显示</div>
-                        <div @click="finaceSelect(1)" :class="goodsDetail.finaceList[1].checked ? 'selected value' : 'value'" v-if="goodsDetail.finaceList.length>1&&fenqiSelectFlag==true">分{{finace}}期&nbsp&nbsp|&nbsp&nbsp每期¥{{goodsDetail.finaceList[1].amount}}</div>
-                    </div>
-                </div>
-                <div @click="placeOrder" class="startOrder">
-                    开始下单
                 </div>
             </div>
         </div>
@@ -548,6 +552,7 @@
         margin-top: 20rpx;
     }
     .goods-price-container {
+        // margin-top: 300rpx;
         display: flex;
         // margin-top: 20rpx;
         justify-content: space-between;
@@ -615,8 +620,8 @@
         margin-left: 60rpx;
     }
     .l-collect .icon {
-        width: 36rpx;
-        height: 34rpx;
+        width: 54rpx;
+        height: 52rpx;
     }
     .select-guige {
         background-color: #FF7000;
@@ -678,17 +683,19 @@
         overflow-y: auto;
     }
     .img-info {
-        position: relative;
+        position: fixed;
         width: 100%;
         height: 300rpx;
         background-color: #FFF6EF;
         display: flex;
         flex-direction: row;
+        z-index: 12;
     }
     .img-info .img {
         margin: 60rpx 0 0 60rpx;
         width: 280rpx;
         height: 280rpx;
+        z-index: 888;
     }
     .img-info .info {
         color: #FF6F00;
@@ -711,12 +718,21 @@
         width: 48rpx;
         height: 48rpx;
     }
+    .center-container {
+        margin-top: 460rpx;
+        margin-bottom: 140rpx;
+    }
     .price-container {
+        position: fixed;
+        width: 750rpx;
+        background-color: #ffffff;
+        margin-top: 300rpx;
         display: flex;
         height: 160rpx;
         flex-direction: column;
         align-items: center;
-        justify-content: center
+        justify-content: center;
+        z-index: 10;
     }
     .price-container .p {
         font-weight: 700;
@@ -812,6 +828,13 @@
         border: 1px solid #ff6f00 !important;
         color: #ff6f00 !important;
     }
+    .bottom-btn-container {
+        background-color: #ffffff;
+        width: 750rpx;
+        height: 140rpx;
+        position: fixed;
+        bottom: 0rpx;
+    }
     .startOrder{
         color: #fff;
         background-color: #FF6F00;
@@ -823,7 +846,7 @@
         line-height: 80rpx;
         font-weight: 400;
         font-size: 30rpx;
-        margin-bottom: 30rpx;
+        // margin-bottom: 30rpx;
         margin-top: 30rpx;
     }
 </style>

@@ -24,7 +24,9 @@ export default {
             'pages/placeOrder/index',
             'pages/xieyi/index',
             'pages/orderDetail/index',
-            'pages/orderList/index'
+            'pages/orderList/index',
+            'pages/returnDevice/index', 
+            'pages/returnDeviceConfirm/index'
         ],
         window: {
             backgroundTextStyle: 'light',

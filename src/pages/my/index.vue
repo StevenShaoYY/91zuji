@@ -16,7 +16,7 @@
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </navigator>
             <navigator class="my-set-container" url="/pages/addressManage/index">
-                <img class="icon2" src="/static/images/address.png" alt="">
+                <img class="icon2" src="/static/images/ic_address.png" alt="">
                 <div class="set-text">地址管理</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </navigator>
@@ -140,11 +140,10 @@
        margin-right: 20rpx;
    }
    .icon2 {
-       width: 50rpx;
-       height: 50rpx;
-       margin-top: 20rpx;
-       margin-right: 15rpx;
-       margin-left: -5rpx;
+       width: 40rpx;
+       height: 40rpx;
+       margin-top: 25rpx;
+       margin-right: 20rpx;
    }
    .right {
        width: 17rpx;
