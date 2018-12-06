@@ -39,7 +39,7 @@
         <div class="text-container">
             <p>建议顺丰保价，降低运输风险</p> 
         </div>
-        <div @click="nextStep" class="startOrder">
+        <div @click="returnOrder" class="startOrder">
             确认归还
         </div>
     </scroll-view>
@@ -77,26 +77,54 @@
             this.receiveName = this.$mp.query.receiveName
         },
         methods: {
-            getOrderDetail() {
-                this.POST('api/tradeOrder/backInfo', {"orderId": this.orderId}, res => {
+            returnOrder() {
+                if(this.returnData.shipChannel==='') {
+                    this.toast('请填写快递公司！')
+                    return
+                }
+                if(this.returnData.shipSn==='') {
+                    this.toast('请填写快递单号！')
+                    return
+                }
+                let dto = {
+                    ...returnData,
+                    "orderId": this.orderId
+                }
+                this.POST('api/tradeOrder/back', dto, res => {
                     let result = res.data.result;
-                    this.orderDetail = result
-                    let productSub = {}
-                    productSub.name = result.tradeOrderGoodsRespDTO.goodsName
-                    productSub.picUrl = result.tradeOrderGoodsRespDTO.picUrl
-                    productSub.descList = result.tradeOrderGoodsRespDTO.specifications
-                    productSub.totalRent = result.totalRentAmount 
-                    this.productSub = productSub
+                    if (result){
+                        this.nextStep()
+                    } else {
+                        this.toast('归还失败！请重新尝试！')
+                    }
                 });
+            },
+            toast(str) {
+                if(this.$mp.platform === 'alipay') {
+                    my.showToast({
+                        type: 'none',
+                        content: str,
+                        duration: 3000,
+                        success: () => {
+                            console.log('success')
+                        },
+                    });
+                } else {
+                    wx.showToast({
+                        title: str,
+                        icon: 'none',
+                        duration: 2000
+                    })
+                }
             },
             nextStep() {
                 if(this.$mp.platform == 'alipay') {
-                    my.navigateTo({
-                        url: `/pages/returnOrder/index?orderId=${this.orderId}`
+                    my.redirectTo({
+                        url: '/pages/orderList/index'
                     })
                     } else {
-                    wx.navigateTo({
-                        url: `/pages/returnOrder/index?orderId=${this.orderId}`
+                    wx.redirectTo({
+                        url: '/pages/orderList/index'
                     })
                 }
             }

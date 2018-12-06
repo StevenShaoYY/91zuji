@@ -116,6 +116,7 @@
             </view>
             <view @click="showDialog" class="select-guige">选择规格</view>
         </view>
+        <login-dialog v-if="showLogin"></login-dialog>
     </view>
 </div>
 </template>
@@ -123,11 +124,13 @@
 <script>
     import mixins from '../../mixins'
     import CommentCard from '../../components/commentCard.vue';
+    import LoginDialog from '../../components/loginDialog.vue';
     export default {
         mpType: 'page',
         mixins: [mixins],
         components: {
-            'comment-card': CommentCard
+            'comment-card': CommentCard,
+            'login-dialog': LoginDialog
         },
         data () {
             return {
@@ -147,7 +150,8 @@
                 fenqiSelectFlag: false,
                 allResultArr: [],
                 hasRentSelected: false,
-                finace: ''
+                finace: '',
+                showLogin: false
             }
         },
         created () {
@@ -246,6 +250,44 @@
             });
         },
         methods: {
+            checkLogin() {
+                if(getApp().globalData.accessToken === '') {
+                    return false
+                } else {
+                    return true
+                }
+            },
+            toastComfirm() {
+                if(this.$mp.platform == 'alipay') {
+                    my.confirm({
+                        title: '登录提示',
+                        content: '确定要取消订单吗？',
+                        confirmButtonText: '取消订单',
+                        cancelButtonText: '暂不需要',
+                        success: (result) => {
+                            this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
+                                my.navigateBack({
+                                    delta: 1
+                                })                                
+                            });
+                        },
+                    });
+                } else {
+                    wx.showModal({
+                        title: '温馨提示',
+                        content: '确定要取消订单吗？',
+                        confirmText: '取消订单',
+                        cancelText: '暂不需要',
+                        success: (result) => {
+                            this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
+                                wx.navigateBack({
+                                    delta: 1
+                                })                                
+                            });
+                        },
+                    });
+                }
+            },  
             toast(str) {
                 if(this.$mp.platform === 'alipay') {
                     my.showToast({
@@ -472,6 +514,10 @@
                 }
             },
             collect(flag) {
+                if(!this.checkLogin()){
+                    this.showLogin=true
+                    return
+                }
                 let dto = {
                     "type": 0,
                     "valueId": this.$mp.query.id
