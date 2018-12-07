@@ -1,6 +1,18 @@
 <template>
 <div>
     <view class="container">
+        <section class="header">
+            <swiper class="goodsimgs" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
+                <swiper-item v-for="(item, index) of goodsDetail.gallery" :key="index" :data-index="index">
+                    <img class="image" :src="item" background-size="cover"/>
+                </swiper-item>
+            </swiper>
+            <div class="goods-title">{{goodsDetail.name}}</div>
+            <div class="goods-price-container">
+                <div class="rent-price">¥<span class="big-price">{{goodsDetail.rentPrice}}</span><span class="normal-font">/{{goodsDetail.periodUnit}}</span></div>
+                <div class="total-price">商品价值：¥{{goodsDetail.retailPrice}}</div>
+            </div>
+        </section>
         <ul class="tab-list">
             <li v-for="(item,index) of tabList" :key="index" :class="{'active':index==activeItem}" @click="switchTab(index)">
             {{item}}
@@ -9,18 +21,6 @@
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
             <swiper-item>
                 <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    <section class="header">
-                        <swiper class="goodsimgs" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
-                            <swiper-item v-for="(item, index) of goodsDetail.gallery" :key="index" :data-index="index">
-                                <img class="image" :src="item" background-size="cover"/>
-                            </swiper-item>
-                        </swiper>
-                        <div class="goods-title">{{goodsDetail.name}}</div>
-                        <div class="goods-price-container">
-                            <div class="rent-price">¥<span class="big-price">{{goodsDetail.rentPrice}}</span><span class="normal-font">/{{goodsDetail.periodUnit}}</span></div>
-                            <div class="total-price">商品价值：¥{{goodsDetail.retailPrice}}</div>
-                        </div>
-                    </section>
                     <section>
                         <div class="zuling-header">租赁流程</div>
                         <div class="zuling-content">选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
@@ -116,7 +116,7 @@
             </view>
             <view @click="showDialog" class="select-guige">选择规格</view>
         </view>
-        <login-dialog v-if="showLogin"></login-dialog>
+        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
     </view>
 </div>
 </template>
@@ -185,8 +185,6 @@
                         const rpxR = 750 / clientWidth;
                         const calc = clientHeight * rpxR - 170;
                         this.winHeight = calc
-                        console.log(clientHeight)
-                        console.log(this.winHeight)
                     }
                 });
             }
@@ -345,6 +343,10 @@
                 this.activeItem = index
             },
             showDialog() {
+                if(!this.checkLogin()){
+                    this.showLogin=true
+                    return
+                }
                 this.openAttr = false;
             },
             closeAttr () {
@@ -395,7 +397,6 @@
                 // this.allResultArr
                 let res = []
                 let proList = this.goodsDetail.productList
-                console.log(this.goodsDetail)
                 for (let i of proList) {
                     if (i.number <= 0) continue
                     let set = this.powerset(i.specifications)

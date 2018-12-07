@@ -2,62 +2,70 @@
     <div class="wrapper">
         <div class="section section1">
             <img class="img" src="/static/images/bg_mine_top.png" background-size="cover" />
-            <div class="avata-container">
+            <div class="avata-container" v-if="!userInfo.avatar">
                 <img class="avata" src="/static/images/img_head_mine.png" background-size="cover" />
             </div>
-            <div class="text">
+            <div class="avata-container" v-if="userInfo.avatar">
+                <img class="avata" :src="userInfo.avatar" background-size="cover" />
+            </div>
+            <div class="text" v-if="!userInfo.nickName">
                 未登录
+            </div>
+            <div class="text" v-if="userInfo.nickName">
+                {{userInfo.nickName}}
             </div>
         </div>
         <div class="section">
-            <navigator class="my-set-container">
+            <div class="my-set-container">
                 <img class="icon" src="/static/images/icon_massage_mine.png" alt="">
                 <div class="set-text">实名认证</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
-            </navigator>
-            <navigator class="my-set-container" url="/pages/addressManage/index">
+            </div>
+            <div class="my-set-container" @click="goToUrl('/pages/addressManage/index')">
                 <img class="icon2" src="/static/images/ic_address.png" alt="">
                 <div class="set-text">地址管理</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
-            </navigator>
-            <navigator class="my-set-container" url="/pages/orderList/index">
+            </div>
+            <div class="my-set-container" @click="goToUrl('/pages/orderList/index')">
                 <img class="icon" src="/static/images/tab_order_current.png" alt="">
                 <div class="set-text">我的订单</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
-            </navigator>
-            <navigator class="my-set-container" url="/pages/mycollect/index">
+            </div>
+            <div class="my-set-container" @click="goToUrl('/pages/mycollect/index')">
                 <img class="icon" src="/static/images/icon_collect_mine.png" alt="">
                 <div class="set-text">我的收藏</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
-            </navigator>
-            <navigator class="my-set-container" url="/pages/mycomment/index">
+            </div>
+            <div class="my-set-container" @click="goToUrl('/pages/mycomment/index')">
                 <img class="icon" src="/static/images/icon_comment_mine.png" alt="">
                 <div class="set-text">我的评论</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
-            </navigator>
+            </div>
         </div>
         <div class="section">
-            <navigator class="my-set-container" url="/pages/helper/index">
+            <div class="my-set-container" @click="goToUrl('/pages/helper/index')">
                 <img class="icon" src="/static/images/icon_question_mine.png" alt="">
                 <div class="set-text">帮助中心</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
-            </navigator>
+            </div>
         </div>
+        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
     </div>
 </template>
 
 <script>
     import mixins from '../../mixins'
-    // import Topic from '../../components/topic.vue';
+    import LoginDialog from '../../components/loginDialog.vue';
     export default {
         mpType: 'page',
         mixins: [mixins],
-        // components: {
-        //     'yx-slider': YXSlider,
-        //     'topic': Topic
-        // },
+        components: {
+            'login-dialog': LoginDialog
+        },
         data () {
             return {
+                showLogin: false,
+                userInfo: {}
             }
         },
         created () {
@@ -68,9 +76,42 @@
             //     let result = res.data.result;
             //     this.YXBanners = result
             // });
+            if(this.$mp.platform=='alipay') {
+                my.getAuthCode({
+                    scopes: 'auth_user',
+                    success: (res) => {
+                        my.getAuthUserInfo({
+                        success: (userInfo) => {
+                            this.userInfo = userInfo
+                        }
+                        });
+                    },
+                });
+            }
         },
         methods: {
-            
+            goToUrl(url) {
+                if(!this.checkLogin()){
+                    this.showLogin=true
+                    return
+                }
+                 if(this.$mp.platform === 'alipay') {
+                    my.navigateTo({
+                        url: url
+                    })
+                } else {
+                    wx.navigateTo({
+                       url: url
+                    })
+                }
+            },
+            checkLogin() {
+                if(getApp().globalData.accessToken === '') {
+                    return false
+                } else {
+                    return true
+                }
+            }
         }
     }
 </script>

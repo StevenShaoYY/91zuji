@@ -9,20 +9,14 @@
         my.getAuthCode({
           scopes: 'auth_base',
           success: (res) => {
-            getApp().globalData.authCode = res.authCode
-            my.getAuthUserInfo({
-              success: (userInfo) => {
-                console.log(userInfo.nickName)
-              },
-              fail: (res) => {
-                  console.log(res)
-                  console.log('getuserInfo_fail')
-              },
-            });
+            // getApp().globalData.authCode = res.authCode
+            this.globalData.authCode = res.authCode
             this.POST('userBase/alipayLogin', {"authCode": res.authCode}, res => {
                 let result = res.data.result;
-                if(result.accessToken){
-                  getApp().globalData.accessToken = result.accessToken
+                console.log(result)
+                if(result.accessToken && result.accessToken!==''){
+                  this.globalData.accessToken = result.accessToken
+                  // getApp().globalData.accessToken = result.accessToken
                 }
             },'user');
           },
