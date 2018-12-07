@@ -14,13 +14,13 @@
             </div>
         </section>
         <ul class="tab-list">
-            <li v-for="(item,index) of tabList" :key="index" :class="{'active':index==activeItem}" @click="switchTab(index)">
+            <li class="ta-li" v-for="(item,index) of tabList" :key="index" :class="{'active':index==activeItem}" @click="switchTab(index)">
             {{item}}
             </li>
         </ul>
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
             <swiper-item>
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
                     <section>
                         <div class="zuling-header">租赁流程</div>
                         <div class="zuling-content">选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
@@ -42,14 +42,14 @@
                 </scroll-view>
             </swiper-item>
             <swiper-item>
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
                     <div class="img-container">
                         <img mode="widthFix" v-for="(item, index) of goodsDetail.description" :key="index" :data-index="index" class="desc-image" :src="item" background-size="cover"/>
                     </div>
                 </scroll-view>
             </swiper-item>
             <swiper-item>
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
                     <div class="comment-container has-comment" v-if="commentList.length>0">
                         <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
                     </div>
@@ -151,7 +151,9 @@
                 allResultArr: [],
                 hasRentSelected: false,
                 finace: '',
-                showLogin: false
+                showLogin: false,
+                hasScrollB:false,
+                hasScrollT:false
             }
         },
         created () {
@@ -173,7 +175,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 170;
+                        const calc = clientHeight * rpxR-85-140;
                         this.winHeight = calc
                     }
                 });
@@ -183,7 +185,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 170;
+                        const calc = clientHeight * rpxR -85-140;
                         this.winHeight = calc
                     }
                 });
@@ -248,6 +250,31 @@
             });
         },
         methods: {
+            scrollByPlat(da) {
+                if(this.$mp.platform === 'alipay') {
+                    my.pageScrollTo({
+                        scrollTop: da
+                    })
+                } else {
+                    wx.pageScrollTo({
+                        scrollTop: da
+                    })
+                }
+            },
+            scrollEvent(e) {
+                if(!this.hasScrollB &&e.detail.scrollTop>1) {
+                    this.scrollByPlat(410)
+                    this.hasScrollB = true
+                    this.hasScrollT = false
+                    // this.scrollByPlat(e.detail.scrollTop)
+                }
+                if(!this.hasScrollA &&e.detail.scrollTop<1) {
+                    // this.scrollByPlat(0)
+                    this.hasScrollT = true
+                    this.hasScrollB = false
+                    // this.scrollByPlat(e.detail.scrollTop)
+                }
+            },
             checkLogin() {
                 if(getApp().globalData.accessToken === '') {
                     return false
@@ -547,30 +574,55 @@
     }
     .tab-list {
         display: flex;
-        height: 70rpx;
+        height: 90rpx;
         justify-content: space-around;
         align-items: center;
-        width: 50%;
-        margin-left: 25%;
+        width: 692rpx;
+        margin-left: 29rpx;
     }
-    .tab-list view {
+    .tab-list .ta-li {
         font-size: 28rpx;
-        font-weight: 700;
-        line-height: 35rpx;
+        line-height: 50rpx;
         color: #a8a8a8;
-        // border-radius: 25px;
-        // width: 100px;
-        display: flex;
-        justify-content: center;
-        padding-right: 8rpx;
-        padding-bottom: 5rpx;
-        // border: 0.5px solid #FFFFFF;
+        border-radius: 25rpx;
+        width: 160rpx;
+        text-align:center;
+        // border: 1rpx solid #FFFFFF;
     }
     .tab-list .active {
-        border-bottom: 5rpx solid #1a1717;
-        // box-shadow: 2px 2px 10px #cccccc;
-        color:#1b1b1b;
+      border: 1rpx solid #f6f6f6;
+      box-shadow: 4rpx 4rpx 20rpx #cccccc;
+      color:#1b1b1b;
     }
+    .swiper-container{
+        margin-bottom: 140rpx;
+    }
+    // .tab-list {
+    //     display: flex;
+    //     height: 70rpx;
+    //     justify-content: space-around;
+    //     align-items: center;
+    //     width: 50%;
+    //     margin-left: 25%;
+    // }
+    // .tab-list view {
+    //     font-size: 28rpx;
+    //     font-weight: 700;
+    //     line-height: 35rpx;
+    //     color: #a8a8a8;
+    //     // border-radius: 25px;
+    //     // width: 100px;
+    //     display: flex;
+    //     justify-content: center;
+    //     padding-right: 8rpx;
+    //     padding-bottom: 5rpx;
+    //     // border: 0.5px solid #FFFFFF;
+    // }
+    // .tab-list .active {
+    //     border-bottom: 5rpx solid #1a1717;
+    //     // box-shadow: 2px 2px 10px #cccccc;
+    //     color:#1b1b1b;
+    // }
     .header {
         width: 692rpx;
         background-color: #ffffff;
