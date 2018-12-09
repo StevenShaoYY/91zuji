@@ -95,13 +95,14 @@
             <div class="btn-container">
                 <div v-for="item of orderDetail.operationList" :key="item.id">
                     <div @click="payAtOnce" v-if="item.id==1" class="btn sty1">立即付款</div>
+                    <div @click="confiremOrder" v-if="item.id==6" class="btn sty1">确认收货</div>
                     <div @click="returnOrder" v-if="item.id==3" class="btn sty1">归还设备</div>
                     <div @click="cancleOrder" v-if="item.id==2"  class="btn sty2">取消订单</div>
                 </div>
             </div>
         </div>
     </scroll-view>
-    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay"></pay-pop>
+    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></pay-pop>
 </div>
 </template>
 
@@ -133,6 +134,32 @@
             this.getOrderDetail()
         },
         methods: {
+            paySuccess() {
+                this.showPopFlag = false
+                this.toast('支付成功！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            payFail() {
+                this.showPopFlag = false
+                this.toast('支付失败！请重新支付！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            payUnknow() {
+                this.showPopFlag = false
+                this.toast('支付处理中！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            redirectToAddress(url) {
+                if(this.$mp.platform === 'alipay') {
+                    my.redirectTo({
+                        url: url
+                    })
+                } else {
+                    wx.redirectTo({
+                        url: url
+                    })
+                }
+            },
             getOrderDetail() {
                 this.POST('api/tradeOrder/detail', {"orderId": this.$mp.query.id}, res => {
                     let result = res.data.result;
@@ -175,6 +202,37 @@
             },
             closePay() {
                 this.showPopFlag = false
+            },
+            confiremOrder() {
+                if(this.$mp.platform == 'alipay') {
+                    my.confirm({
+                        title: '温馨提示',
+                        content: '确定要收货吗？',
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        success: (result) => {
+                            this.POST('api/tradeOrder/arriveConfirm', {"orderId": this.$mp.query.id}, res => {
+                                my.navigateBack({
+                                    delta: 1
+                                })                                
+                            });
+                        },
+                    });
+                } else {
+                    wx.showModal({
+                        title: '温馨提示',
+                        content: '确定要收货吗？',
+                        confirmText: '确定',
+                        cancelText: '取消',
+                        success: (result) => {
+                            this.POST('api/tradeOrder/arriveConfirm', {"orderId": this.$mp.query.id}, res => {
+                                wx.navigateBack({
+                                    delta: 1
+                                })                                
+                            });
+                        },
+                    });
+                }
             },
             returnOrder() {
                 if(this.$mp.platform == 'alipay') {

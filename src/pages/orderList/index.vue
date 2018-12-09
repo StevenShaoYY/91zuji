@@ -78,7 +78,7 @@
             let sta = this.tabList[this.activeItem].status
             this.getOrderByStatus(sta, this.activeItem)
         },
-        methods: {
+        methods: { 
             refreshPage() {
                 let sta = this.tabList[this.activeItem].status
                 this.getOrderByStatus(sta ,this.activeItem)
@@ -88,7 +88,8 @@
                     let result = res.data.result;
                     this.tabList = result
                     for(let i in this.tabList) {
-                        this.detailList[i].id = this.tabList[i].status
+                        this.$set(this.detailList[i],'id',this.tabList[i].status)
+                        // this.detailList[i].id = this.tabList[i].status
                     }
                     this.getOrderByStatus(this.tabList[0].status, 0)
                 });
@@ -101,7 +102,8 @@
                 }
                 this.POST('api/tradeOrder/list', dto, res => {
                     let result = res.data.result;
-                    this.detailList[index].data = result
+                    this.$set(this.detailList[index],'data',result)
+                    // this.detailList[index].data = result
                     if (this.$mp.platform === 'alipay') {
                         my.stopPullDownRefresh()
                     } else {
