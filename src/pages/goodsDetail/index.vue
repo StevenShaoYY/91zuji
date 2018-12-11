@@ -35,7 +35,7 @@
                         <div class="zuling-subheader">收货须知</div>
                         <div class="zuling-content">身份证正反面复印件以确认本人收货，并交由快递小哥寄回本平台制定地点存档</div>
                         <div class="zuling-subheader">租金</div>
-                        <div class="zuling-content">用户需按月支付租金，需开通支付宝/微信免密制度协议，平台每月将自动从支付宝/微信账号中扣除相应租金。用户也可提前主动支付剩下的租金</div>
+                        <div class="zuling-content">用户需按月支付租金，需开通支付宝免密制度协议，平台每月将自动从支付宝账号中扣除相应租金。用户也可提前主动支付剩下的租金</div>
                         <div class="zuling-subheader">买断</div>
                         <div class="zuling-content">租赁到期后可支付买断款买断该商品，买断款以下单时协议里的买断价为准。</div>
                     </section>
@@ -175,7 +175,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR-85-140;
+                        const calc = clientHeight * rpxR-85-120;
                         this.winHeight = calc
                     }
                 });
@@ -185,7 +185,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR -85-140;
+                        const calc = clientHeight * rpxR -85-120;
                         this.winHeight = calc
                     }
                 });

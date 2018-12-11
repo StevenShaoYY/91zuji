@@ -134,6 +134,7 @@
         position: relative;
     }
     .tab-list {
+        background-color: #fff;
         display: flex;
         height: 80rpx;
         justify-content: space-around;
@@ -167,5 +168,6 @@
     }
     .swiper-container {
         margin-top: 30rpx;
+        background-color: #fff;
     }
 </style>

@@ -39,9 +39,6 @@
             }
         },
         created () {
-            /*
-            * demo 使用假数据
-            */
             this.POST('api/home/ad', '', res => {
                 let result = res.data.result;
                 this.YXBanners = result
@@ -65,46 +62,12 @@
             }, );
         },
         methods: {
-            jumpWeb (_url) {
-                // const url = this.$getConfig().bundleUrl;
-                // navigator.push({
-                //     url: util.setBundleUrl(url, 'page/webview.js?weburl='+_url) ,
-                //     animated: "true"
-                // });
-            },
-            onloading () {
-                // modal.toast({ message: 'loading', duration: 0.3 })
-                // this.showLoading = 'show';
-                // setTimeout(() => {
-                //     this.goodsList.push(...this.recommend.goods1);
-                //     this.showLoading = 'hide'
-                // }, 300)
-            },
-            onloadmore () {
-                // modal.toast({ message: 'loading', duration: 0.3 })
-                // setTimeout(() => {
-                //     this.goodsList.push(...this.recommend.goods1);
-                // }, 100)
-            },
-            loadingDown(){
-                // this.goodsList =[];
-                // this.goodsList.push(...this.recommend.goods2);
-                // this.goodsList.push(...this.recommend.goods1);
-            }
         }
     }
 </script>
 
 
 <style scoped lang="scss">
-    @font-face {
-        font-family: 'iconfont';  
-        src: url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.eot');
-        src: url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.eot?#iefix') format('embedded-opentype'),
-        url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.woff') format('woff'),
-        url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.ttf') format('truetype'),
-        url('https://at.alicdn.com/t/font_404010_f29c7wlkludz33di.svg#iconfont') format('svg');
-    }
     .wrapper {
         background-color: #ffffff;
         font-family:microsoft yahei;

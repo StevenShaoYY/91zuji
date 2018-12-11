@@ -27,7 +27,7 @@
         position: absolute;
         top: 35vh;
         width: 550rpx;
-        height: 240rpx;
+        height: 260rpx;
         left: 100rpx;
         z-index: 888;
         background-color: #fff;

@@ -20,11 +20,6 @@
         </div>
         <div class="region-select" v-if="openSelectRegion">
             <div class="hd">
-                <!-- <div class="region-selected">
-                    <div :class="['item', { disabled: item.id == 0, selected: (regionType-1) == index }]"
-                    @click="selectRegionType" :data-region-type-index="index" v-for="(item, index) of selectRegionList" :key="item.id">
-                    {{item.name}}</div>
-                </div> -->
                 <div class="region-selected">
                     <div :class="['item', { disabled: selectRegionList[0].id == 0, selected: (regionType-1) == 0 }]"
                     @click="selectRegionType" :data-region-type-index="0">

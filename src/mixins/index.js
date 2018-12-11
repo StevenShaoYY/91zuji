@@ -76,6 +76,24 @@ export default {
                 },
                 url,
                 success: callback,
+                fail: (cb) => {
+                    if (this.$mp.platform === 'alipay') {
+                        my.showToast({
+                            type: 'none',
+                            content: '网络请求失败！',
+                            duration: 3000,
+                            success: () => {
+                                console.log('success')
+                            },
+                        });
+                    } else {
+                        wx.showToast({
+                            title: '网络请求失败！',
+                            icon: 'none',
+                            duration: 2000
+                        })
+                    }
+                },
                 data: JSON.stringify(data)
             })
         }

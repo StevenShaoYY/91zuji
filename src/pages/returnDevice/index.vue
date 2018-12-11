@@ -65,7 +65,6 @@
         },
         created () {
             this.orderId = this.$mp.query.id
-            // this.getOrderDetail()
             this.getOrderDetailTest()
         },
         methods: {

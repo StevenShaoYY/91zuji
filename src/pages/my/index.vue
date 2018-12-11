@@ -69,13 +69,6 @@
             }
         },
         created () {
-            /*
-            * demo 使用假数据
-            */
-            // this.POST('api/home/ad', '', res => {
-            //     let result = res.data.result;
-            //     this.YXBanners = result
-            // });
             if(this.$mp.platform=='alipay') {
                 my.getAuthCode({
                     scopes: 'auth_user',

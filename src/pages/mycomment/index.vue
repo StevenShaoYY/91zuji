@@ -51,22 +51,14 @@
 
 
 <style scoped lang="scss">
-    // .wrapper{
-    //     font-size: 26rpx;
-    //     margin-left: 26rpx;
-    //     width: 692rpx;
-    //     margin-top: 60rpx;
-    //     margin-left: 29rpx;
-    //     line-height: 30rpx;
-    // }
     .comment-container {
         font-family:microsoft yahei;
         width: 692rpx;
-        min-height: 95vh;
+        min-height: calc(100vh - 60rpx);
         margin-left: 29rpx;
         border: 1px solid #FAFAFA;
         border-radius: 20rpx;
-        margin-top: 20rpx;
+        margin-top: 30rpx;
         box-shadow: 2rpx 2rpx 50rpx #cccccc;
     }
     .no-comment-container {

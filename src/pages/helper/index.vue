@@ -25,9 +25,6 @@
             }
         },
         created () {
-            /*
-            * demo 使用假数据
-            */
             this.POST('issue/list', '', res => {
                 let result = res.data.result;
                 for (let i of result) {
@@ -78,13 +75,13 @@
 
 <style scoped lang="scss">
    .wrapper{
-    font-family:microsoft yahei;
+        font-family:microsoft yahei;
        background-color: #fff;
        min-height: 100%;
    }
    .trans-faq{
-        width: 94%;
-        margin: 2% 3%;
+        width: 692rpx;
+        margin: 30rpx 29rpx;
     }
 
     .trans-faq .trans-faq-li {
