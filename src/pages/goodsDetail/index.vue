@@ -1,6 +1,6 @@
 <template>
 <div>
-    <view class="container">
+    <view class="container" :style="divStyle" >
         <section class="header">
             <swiper class="goodsimgs" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
                 <swiper-item v-for="(item, index) of goodsDetail.gallery" :key="index" :data-index="index">
@@ -20,7 +20,7 @@
         </ul>
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
             <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
                     <section>
                         <div class="zuling-header">租赁流程</div>
                         <div class="zuling-content">选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
@@ -59,7 +59,16 @@
                 </scroll-view>
             </swiper-item>
         </swiper>
-        <div class="attr-pop-box" :hidden="openAttr">
+        <view class="bottom-btn">
+            <view class="l-collect" >
+                <img @click="collect(false)" v-if="goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_current.png"/>
+                <img @click="collect(true)" v-if="!goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_normal.png"/>
+            </view>
+            <view @click="showDialog($event)" class="select-guige">立即租赁</view>
+        </view>
+        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
+    </view>
+       <div class="attr-pop-box" :hidden="openAttr" catchtouchmove="ture">
             <div class="attr-pop">
                 <div class="img-info">
                     <div class="close" @click="closeAttr">
@@ -104,20 +113,11 @@
                 </div>
                 <div class="bottom-btn-container">
                     <div @click="placeOrder" class="startOrder">
-                        立即租赁
+                        确认
                     </div>
                 </div>
             </div>
         </div>
-        <view class="bottom-btn">
-            <view class="l-collect" >
-                <img @click="collect(false)" v-if="goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_current.png"/>
-                <img @click="collect(true)" v-if="!goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_normal.png"/>
-            </view>
-            <view @click="showDialog" class="select-guige">选择规格</view>
-        </view>
-        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
-    </view>
 </div>
 </template>
 
@@ -153,7 +153,9 @@
                 finace: '',
                 showLogin: false,
                 hasScrollB:false,
-                hasScrollT:false
+                hasScrollT:false,
+                canScroll: true,
+                divStyle: ''
             }
         },
         created () {
@@ -369,15 +371,19 @@
             switchTab (index) {
                 this.activeItem = index
             },
-            showDialog() {
+            showDialog(e) {
                 if(!this.checkLogin()){
                     this.showLogin=true
                     return
                 }
                 this.openAttr = false;
+                this.canScroll = false;
+                this.divStyle = 'top:0rpx;left:0px;width:100%;height:100%;overflow:hidden;position:fixed;z-index:0;'
             },
             closeAttr () {
+                this.canScroll = true
                 this.openAttr = true;
+                this.divStyle = ''
             },
             selectproduct(e) {
                 //1.点击改变样式

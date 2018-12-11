@@ -253,11 +253,15 @@
                         confirmButtonText: '取消订单',
                         cancelButtonText: '暂不需要',
                         success: (result) => {
-                            this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
-                                my.navigateBack({
-                                    delta: 1
-                                })                                
-                            });
+                            if(result.confirm) {
+                                this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
+                                    my.navigateBack({
+                                        delta: 1
+                                    })                                
+                                });
+                            } else {
+                                return
+                            }
                         },
                     });
                 } else {
@@ -267,11 +271,16 @@
                         confirmText: '取消订单',
                         cancelText: '暂不需要',
                         success: (result) => {
-                            this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
-                                wx.navigateBack({
-                                    delta: 1
-                                })                                
-                            });
+                            if(result.comfirm) {
+                                this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
+                                    wx.navigateBack({
+                                        delta: 1
+                                    })                                
+                                });
+                            } else {
+                                return
+                            }
+                            
                         },
                     });
                 }

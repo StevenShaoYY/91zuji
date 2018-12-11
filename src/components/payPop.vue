@@ -139,8 +139,8 @@
             this.POST('api/tradeOrder/payAtOnce', ddto, res => {
               let result = res.data.result;
               result.amount = result.amount.toFixed(2)
-              this.showPay = true
               this.payInfo = result
+              this.showPay = true
             });
           },
           payOrder() {
