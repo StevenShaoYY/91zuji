@@ -57,7 +57,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 140;
+                        const calc = clientHeight * rpxR - 150;
                         this.winHeight = calc
                     }
                 });
@@ -67,7 +67,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR - 140;
+                        const calc = clientHeight * rpxR - 150;
                         this.winHeight = calc
                     }
                 });
@@ -78,7 +78,7 @@
             let sta = this.tabList[this.activeItem].status
             this.getOrderByStatus(sta, this.activeItem)
         },
-        methods: {
+        methods: { 
             refreshPage() {
                 let sta = this.tabList[this.activeItem].status
                 this.getOrderByStatus(sta ,this.activeItem)
@@ -88,7 +88,8 @@
                     let result = res.data.result;
                     this.tabList = result
                     for(let i in this.tabList) {
-                        this.detailList[i].id = this.tabList[i].status
+                        this.$set(this.detailList[i],'id',this.tabList[i].status)
+                        // this.detailList[i].id = this.tabList[i].status
                     }
                     this.getOrderByStatus(this.tabList[0].status, 0)
                 });
@@ -101,7 +102,8 @@
                 }
                 this.POST('api/tradeOrder/list', dto, res => {
                     let result = res.data.result;
-                    this.detailList[index].data = result
+                    this.$set(this.detailList[index],'data',result)
+                    // this.detailList[index].data = result
                     if (this.$mp.platform === 'alipay') {
                         my.stopPullDownRefresh()
                     } else {
@@ -128,7 +130,7 @@
 
 
 <style scoped lang="scss">
-    .wrapper{
+    .container{
         background-color: #fff;
         font-family:microsoft yahei;
         position: relative;
@@ -136,25 +138,28 @@
     .tab-list {
         background-color: #fff;
         display: flex;
-        height: 80rpx;
+        height: 120rpx;
         justify-content: space-around;
         align-items: center;
         width: 692rpx;
         margin-left: 29rpx;
-        margin-top: 10rpx;
+        // margin-top: 10rpx;
     }
     .tab-list .ta-li {
         font-size: 28rpx;
         line-height: 80rpx;
         color: #a8a8a8;
         border-radius: 40rpx;
+        background-color: #fff;
         width: 200rpx;
         display: flex;
         justify-content: center;
+        margin-top: 20rpx;
         // border: 1rpx solid #FFFFFF;
     }
     .tab-list .active {
       border: 1rpx solid #f6f6f6;
+      background-color: #fff;
       box-shadow: 4rpx 4rpx 20rpx #cccccc;
       color:#1b1b1b;
     }
@@ -165,6 +170,7 @@
         color: #a8a8a8;
         font-size: 28rpx;
         height: 100%;
+        background-color: #fff;
     }
     .swiper-container {
         margin-top: 30rpx;

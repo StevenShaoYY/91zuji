@@ -28,4 +28,5 @@
       }
     }
   }
+// "@megalo/target": "0.4.2",
 </script>

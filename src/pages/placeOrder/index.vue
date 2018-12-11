@@ -50,7 +50,7 @@
         <div class="text"><span>点击确认下单代表已同意</span><navigator url="/pages/xieyi/index" class="xieyi">《用户服务及租赁协议》</navigator></div>
         <div @click="submit" class="botton-btn">确认下单</div>
     </div>
-    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay"></pay-pop>
+    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></pay-pop>
 </div>
 </template>
 
@@ -135,6 +135,17 @@
                     })
                 }
             },
+            redirectToAddress(url) {
+                if(this.$mp.platform === 'alipay') {
+                    my.redirectTo({
+                        url: url
+                    })
+                } else {
+                    wx.redirectTo({
+                        url: url
+                    })
+                }
+            },
             toast(str) {
                 if(this.$mp.platform === 'alipay') {
                     my.showToast({
@@ -209,6 +220,21 @@
                         url
                     })
                 }
+            },
+            paySuccess() {
+                this.showPopFlag = false
+                this.toast('支付成功！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            payFail() {
+                this.showPopFlag = false
+                this.toast('支付失败！请重新支付！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            payUnknow() {
+                this.showPopFlag = false
+                this.toast('支付处理中！')
+                this.redirectToAddress('/pages/orderList/index')
             }
         }
     }
@@ -328,6 +354,7 @@
         height: 80rpx;
     }
     .emergency-container .input-emergency-container .input{
+        width: 100%;
         font-size: 26rpx;
         line-height: 80rpx;
         height: 80rpx;

@@ -13,11 +13,12 @@
     <div class="bottom-container">
       <div v-for="item of data.operationList" :key="item.id">
         <div v-if="item.id==1" @click="payAtOnce" class="btn sty1">立即付款</div>
+        <div @click="confiremOrder" v-if="item.id==6" class="btn sty1">确认收货</div>
         <div v-if="item.id==3" @click="returnOrder" class="btn sty1">归还设备</div>
         <div v-if="item.id==2" @click="cancleOrder" class="btn sty2">取消订单</div>
       </div>
     </div>
-    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay"></pay-pop>
+    <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></pay-pop>
   </div>
 </template>
 <style scoped>
@@ -25,6 +26,7 @@
       width: 692rpx;
       margin-left:29rpx;
       border-radius: 15rpx; 
+      background-color: #ffffff;
       border: 1px solid #FAFAFA;
       box-shadow: 2rpx 2rpx 50rpx #cccccc;
       margin-top: 20rpx;
@@ -79,7 +81,8 @@
 <script>
   import PayPop from './payPop.vue'
   import OrderProduct from './orderProduct.vue';
-    import mixins from '../mixins'
+  import mixins from '../mixins'
+  import Vue from 'vue';
     export default {
         mixins: [mixins],
         props:{
@@ -94,12 +97,10 @@
         },
         created() {
           this.orderId = this.data.orderId
-          this.productSub={
-            picUrl: this.data.picUrl,
-            descList:this.data.specifications,
-            name:this.data.goodsName,
-            orderSn:this.data.orderSn,
-          }
+          this.productSub.picUrl=this.data.picUrl
+          this.productSub.descList=this.data.specifications
+          this.productSub.name=this.data.goodsName
+          this.productSub.orderSn=this.data.orderSn
         },
         data () {
             return {
@@ -109,6 +110,59 @@
             }
         },
         methods: {
+          paySuccess() {
+                this.showPopFlag = false
+                this.toast('支付成功！')
+                this.redirectToAddress('/pages/orderList/index')
+          },
+          payFail() {
+                this.showPopFlag = false
+                this.toast('支付失败！请重新支付！')
+                this.redirectToAddress('/pages/orderList/index')
+          },
+          payUnknow() {
+                this.showPopFlag = false
+                this.toast('支付处理中！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            confiremOrder() {
+                if(this.$mp.platform == 'alipay') {
+                    my.confirm({
+                        title: '温馨提示',
+                        content: '确定要收货吗？',
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        success: (result) => {
+                            this.POST('api/tradeOrder/arriveConfirm', {"orderId": this.$mp.query.id}, res => {
+                                this.$emit('fresh')                                
+                            });
+                        },
+                    });
+                } else {
+                    wx.showModal({
+                        title: '温馨提示',
+                        content: '确定要收货吗？',
+                        confirmText: '确定',
+                        cancelText: '取消',
+                        success: (result) => {
+                            this.POST('api/tradeOrder/arriveConfirm', {"orderId": this.$mp.query.id}, res => {
+                                this.$emit('fresh')                               
+                            });
+                        },
+                    });
+                }
+            },
+          redirectToAddress(url) {
+                if(this.$mp.platform === 'alipay') {
+                    my.redirectTo({
+                        url: url
+                    })
+                } else {
+                    wx.redirectTo({
+                        url: url
+                    })
+                }
+            },
           cancleOrder() {
             let order = this.data.orderId
             if(this.$mp.platform == 'alipay') {
