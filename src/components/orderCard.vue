@@ -163,18 +163,22 @@
                     })
                 }
             },
-          cancleOrder() {
-            let order = this.data.orderId
-            if(this.$mp.platform == 'alipay') {
+            cancleOrder() {
+              let order = this.data.orderId
+                if(this.$mp.platform == 'alipay') {
                     my.confirm({
                         title: '温馨提示',
                         content: '确定要取消订单吗？',
                         confirmButtonText: '取消订单',
                         cancelButtonText: '暂不需要',
                         success: (result) => {
-                            this.POST('api/tradeOrder/cancel', {"orderId": order}, res => {
-                              this.$emit('fresh')                
-                            });
+                            if(result.confirm) {
+                                this.POST('api/tradeOrder/cancel', {"orderId": order}, res => {
+                                    this.$emit('fresh')                                  
+                                });
+                            } else {
+                                return
+                            }
                         },
                     });
                 } else {
@@ -184,13 +188,18 @@
                         confirmText: '取消订单',
                         cancelText: '暂不需要',
                         success: (result) => {
-                            this.POST('api/tradeOrder/cancel', {"orderId": order}, res => {
-                                this.$emit('fresh')                           
-                            });
+                            if(result.comfirm) {
+                                this.POST('api/tradeOrder/cancel', {"orderId": order}, res => {
+                                   this.$emit('fresh')                                 
+                                });
+                            } else {
+                                return
+                            }
+                            
                         },
                     });
                 }
-          },
+            },
           gotoDetail() {
             if(this.$mp.platform=='alipay'){
               my.navigateTo({

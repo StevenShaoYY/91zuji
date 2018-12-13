@@ -10,6 +10,7 @@
 <style scoped>
     .iconfont {
         font-family:iconfont;
+        font-family:microsoft yahei;
     }
     .wrapper{
         background-color: #F9F9F9;
@@ -31,8 +32,8 @@
       height: 205rpx;
     }
     .title {
-      font-size: 24rpx;
-      font-weight: 100;
+      font-size: 28rpx;
+      font-weight: 400;
       /* padding: 0 20rpx; */
       color: #A9A9A9;
       width: 290rpx;
@@ -45,10 +46,10 @@
       line-height: 30rpx;
     }
     .price {
-      line-height: 30rpx;
-      font-size: 24rpx;
+      line-height: 32rpx;
+      font-size: 32rpx;
       margin-top: 10rpx;
-      font-weight: 700;
+      font-weight: 400;
     }
 </style>
 <script>

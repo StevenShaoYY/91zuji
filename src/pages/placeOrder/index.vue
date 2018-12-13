@@ -36,12 +36,15 @@
         <div class="emergency-container">
             <div class="title">紧急联系人信息</div>
             <div class="input-emergency-container">
+                <p class="_p">电话</p>
                 <input class="input" type="text" v-model= "submitInfo.emergencyPhone" placeholder="电话">
             </div>
             <div class="input-emergency-container">
+                <p class="_p">姓名</p>
                 <input class="input" type="text" v-model= "submitInfo.emergencyName" placeholder="姓名">
             </div>
             <div class="input-emergency-container">
+                <p class="_p">关系</p>
                 <input class="input" type="text" v-model= "submitInfo.emergencyRelation" placeholder="关系">
             </div>
         </div>       
@@ -352,9 +355,18 @@
         font-size: 26rpx;
         line-height: 80rpx;
         height: 80rpx;
+        display: flex;
+        flex-direction: row;
+    }
+    .emergency-container .input-emergency-container ._p{
+        width: 13%;
+        font-size: 26rpx;
+        line-height: 60rpx;
+        margin-top: 14rpx;
+        height: 80rpx;
     }
     .emergency-container .input-emergency-container .input{
-        width: 100%;
+        width: 88%;
         font-size: 26rpx;
         line-height: 80rpx;
         height: 80rpx;

@@ -2,11 +2,22 @@
 <div>
     <div class="wrapper">
         <div class="realname-noauth" v-if="userNoAuth">
-            <div class="positive-item">
-                <div @click="addPositive" class="img-btn"><img :src="imgPositive.src" ></div>
+            <div class="text-container">
+              <div class="title"><img class="titleimg" src="/static/images/icon_upload_card.png" >上传有效证件</div>
+              <div class="content">1.大陆公民持有的本人有效<span class="origan">二代身份证</span></div>
+              <div class="content">2.拍摄时请保持身份证<span class="origan">边角完整、字迹清晰、亮度均匀</span></div>
             </div>
-            <div class="negative-item">
-                <div @click="addNegative" class="img-btn"><img :src="imgNegative.src" ></div>
+            <div class="pic-item">
+                <div @click="addPositive" class="img-btn"><img class="sf-pic" :src="imgPositive.src" ></div>
+            </div>
+            <div class="pic-item">
+                <div @click="addNegative" class="img-btn"><img class="sf-pic" :src="imgNegative.src" ></div>
+            </div>
+            <div class="tishi-container">
+              <img class="tishi-img" src="/static/images/img_example_first.png" >
+              <img class="tishi-img" src="/static/images/img_example_forth.png" >
+              <img class="tishi-img" src="/static/images/img_example_second.png" >
+              <img class="tishi-img" src="/static/images/img_example_third.png" >
             </div>
         </div>
         <div class="realname-authing" v-if="userAuthed">
@@ -165,16 +176,72 @@
     font-family:microsoft yahei;
     font-size: 26rpx;
     margin-left: 26rpx;
+    background-color: #fff;
     width: 692rpx;
-    margin-top: 60rpx;
     margin-left: 29rpx;
     line-height: 30rpx;
 }
+.text-container{
 
+}
+.text-container .content{
+  font-size: 24rpx;
+  color: #cecece;
+  margin-top: 20rpx;
+}
+.origan {
+  color:#f27605;
+}
+.text-container .title {
+  color: #949494;
+  font-size:26rpx;
+  line-height: 39rpx;
+  position: relative;
+  padding-left: 68rpx;
+}
+.text-container .titleimg {
+  width: 48rpx;
+  height: 39rpx;
+  margin-right: 20rpx;
+  position: absolute;
+  left:0rpx;
+}
 .img-btn {
     text-align: center;
 }
-
+.botton-btn {
+    color: #fff;
+    background-color: #FF6F00;
+    height: 80rpx;
+    border-radius: 40rpx;
+    text-align: center;
+    width: 692rpx;
+    line-height: 80rpx;
+    font-weight: 400;
+    font-size: 30rpx;
+    bottom: 30rpx;
+    position: absolute;
+}
+.pic-item {
+  margin-top: 25rpx;
+  width: 450rpx;
+  height: 290rpx;
+  margin-left: 121rpx;
+}
+.sf-pic {
+  width: 450rpx;
+  height: 290rpx;
+}
+.tishi-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 50rpx;
+}
+.tishi-container .tishi-img{
+  width: 157rpx;
+  height: 154rpx;
+}
 .commit-btn {
     color: #fff;
     background-color: #FF6F00;

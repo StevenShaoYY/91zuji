@@ -1,6 +1,6 @@
 <template>
 <div>
-    <view class="container">
+    <view class="container" :style="divStyle" >
         <section class="header">
             <swiper class="goodsimgs" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
                 <swiper-item v-for="(item, index) of goodsDetail.gallery" :key="index" :data-index="index">
@@ -20,14 +20,14 @@
         </ul>
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
             <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
                     <div class="img-container">
                         <img mode="widthFix" v-for="(item, index) of goodsDetail.description" :key="index" :data-index="index" class="desc-image" :src="item" background-size="cover"/>
                     </div>
                 </scroll-view>
             </swiper-item>
             <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
                     <div class="comment-container has-comment" v-if="commentList.length>0">
                         <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
                     </div>
@@ -37,7 +37,7 @@
                 </scroll-view>
             </swiper-item>
             <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
+                <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
                     <section>
                         <div class="zuling-header">租赁流程</div>
                         <div class="zuling-content">选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
@@ -59,7 +59,15 @@
                 </scroll-view>
             </swiper-item>
         </swiper>
-        <div class="attr-pop-box" :hidden="openAttr">
+        <view class="bottom-btn">
+            <view class="l-collect" >
+                <img @click="collect()" class="icon" :src="coloctIcon"/>
+            </view>
+            <view @click="showDialog($event)" class="select-guige">立即租赁</view>
+        </view>
+        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
+    </view>
+       <div class="attr-pop-box" :hidden="openAttr" catchtouchmove="ture">
             <div class="attr-pop">
                 <div class="img-info">
                     <div class="close" @click="closeAttr">
@@ -104,20 +112,11 @@
                 </div>
                 <div class="bottom-btn-container">
                     <div @click="placeOrder" class="startOrder">
-                        立即租赁
+                        确认
                     </div>
                 </div>
             </div>
         </div>
-        <view class="bottom-btn">
-            <view class="l-collect" >
-                <img @click="collect(false)" v-if="goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_current.png"/>
-                <img @click="collect(true)" v-if="!goodsDetail.isCollect" class="icon" src="/static/images/icon_collect_normal.png"/>
-            </view>
-            <view @click="showDialog" class="select-guige">选择规格</view>
-        </view>
-        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
-    </view>
 </div>
 </template>
 
@@ -153,7 +152,10 @@
                 finace: '',
                 showLogin: false,
                 hasScrollB:false,
-                hasScrollT:false
+                hasScrollT:false,
+                canScroll: true,
+                divStyle: '',
+                coloctIcon: "/static/images/icon_collect_normal.png"
             }
         },
         created () {
@@ -175,7 +177,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR-85-120;
+                        const calc = clientHeight * rpxR-85-130;
                         this.winHeight = calc
                     }
                 });
@@ -185,7 +187,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
-                        const calc = clientHeight * rpxR -85-120;
+                        const calc = clientHeight * rpxR -85-130;
                         this.winHeight = calc
                     }
                 });
@@ -369,15 +371,19 @@
             switchTab (index) {
                 this.activeItem = index
             },
-            showDialog() {
+            showDialog(e) {
                 if(!this.checkLogin()){
                     this.showLogin=true
                     return
                 }
                 this.openAttr = false;
+                this.canScroll = false;
+                this.divStyle = 'top:0rpx;left:0px;width:100%;height:100%;overflow:hidden;position:fixed;z-index:0;'
             },
             closeAttr () {
+                this.canScroll = true
                 this.openAttr = true;
+                this.divStyle = ''
             },
             selectproduct(e) {
                 //1.点击改变样式
@@ -541,7 +547,7 @@
                     list[id].checked = true
                 }
             },
-            collect(flag) {
+            collect() {
                 if(!this.checkLogin()){
                     this.showLogin=true
                     return
@@ -550,15 +556,17 @@
                     "type": 0,
                     "valueId": this.$mp.query.id
                 }
-                if(flag) {
+                if(this.goodsDetail.isCollect) {
+                    this.POST('api/mallCollect/delete', dto, res => {
+                        this.toast('取消收藏成功')
+                        this.coloctIcon = "/static/images/icon_collect_normal.png"
+                        this.goodsDetail.isCollect = false
+                    });
+                } else {
                     this.POST('api/mallCollect/add', dto, res => {
                         this.toast('收藏成功')
                         this.goodsDetail.isCollect = true
-                    });
-                } else {
-                    this.POST('api/mallCollect/delete', dto, res => {
-                        this.toast('取消收藏成功')
-                        this.goodsDetail.isCollect = false
+                        this.coloctIcon = "/static/images/icon_collect_current.png"
                     });
                 }
             }
@@ -712,7 +720,8 @@
         justify-content: space-between;
     }
     .l-collect {
-        height: 100rpx;
+        height: 100rpx; 
+        width: 54rpx;
         display: flex;
         justify-content: center;
         align-items: center;

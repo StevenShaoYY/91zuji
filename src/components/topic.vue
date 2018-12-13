@@ -65,7 +65,7 @@
       left: 0rpx;
     }
     .hot-proc-title {
-      font-size: 24rpx;
+      font-size: 30rpx;
       font-weight: 700;
       line-height: 70rpx;
       position: relative;
