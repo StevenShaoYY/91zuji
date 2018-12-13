@@ -16,6 +16,7 @@
         <div @click="confiremOrder" v-if="item.id==6" class="btn sty1">确认收货</div>
         <div v-if="item.id==3" @click="returnOrder" class="btn sty1">归还设备</div>
         <div v-if="item.id==2" @click="cancleOrder" class="btn sty2">取消订单</div>
+        <div v-if="item.id==7" @click="payRest" class="btn sty2">缴纳余款</div>
       </div>
     </div>
     <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></pay-pop>
@@ -208,6 +209,17 @@
             } else {
               wx.navigateTo({
                 url: `/pages/orderDetail/index?id=${this.data.orderId}`
+              })
+            }
+          },
+          payRest() {
+            if(this.$mp.platform=='alipay'){
+              my.navigateTo({
+                url: `/pages/payrest/index?id=${this.data.orderId}`
+              })
+            } else {
+              wx.navigateTo({
+                url: `/pages/payrest/index?id=${this.data.orderId}`
               })
             }
           },

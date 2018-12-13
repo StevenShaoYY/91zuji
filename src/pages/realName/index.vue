@@ -70,17 +70,32 @@
                     num:'',
                     sex:''
                 },
+                backUrl: false
             }
         },
         created () {
+            if (this.$mp.query.id) {
+                let query = this.$mp.query
+                this.backUrl = `/pages/placeOrder/index?id=${query.id}&guige=${query.guige}&rentTime=${query.rentTime}&finace=${query.finace}`
+            }
             this.getUserInfo();
         },
         methods: {
             getUserInfo() {
                 this.POST('userBase/getSimpleInfo', '', res => {
                     let result = res.data;
-                    console.log(result);
                     if(result.ok===true) {
+                        if(this.backUrl!==false) {
+                            if(this.$mp.platform === 'alipay') {
+                                my.redirectTo({
+                                    url: this.backUrl
+                                })
+                            } else {
+                                wx.redirectTo({
+                                    url: this.backUrl
+                                })
+                            }
+                        }
                         if(result.result.idCardBackImage!=null && result.result.idCardFrontImage !=null) {
                             this.userAuthed = true;
                             this.user.address = result.result.frontRespDTO.address;
@@ -124,7 +139,6 @@
                         console.log(this.imgUrl);
                         this.uploadFile('userBase/idCard/front', 'image','file',this.imgUrl,null, res => {
                             let result = JSON.parse(res.data);
-                            console.log(result);
                             if(result.ok===true) {
                                 this.imgPositive.src = this.imgUrl;
                                 this.imgPositive.isOk = true;
@@ -145,7 +159,6 @@
                         console.log(this.imgUrl);
                         this.uploadFile('userBase/idCard/back', 'image','file',this.imgUrl,null, res => {
                             let result = JSON.parse(res.data);
-                            console.log(result);
                             if(result.ok===true) {
                                 this.imgNegative.src = this.imgUrl;
                                 this.imgNegative.isOk = true;

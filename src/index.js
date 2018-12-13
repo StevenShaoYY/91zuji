@@ -25,9 +25,10 @@ export default {
             'pages/xieyi/index',
             'pages/orderDetail/index',
             'pages/orderList/index',
-            'pages/returnDevice/index', 
+            'pages/returnDevice/index',
             'pages/returnDeviceConfirm/index',
-            'pages/realName/index'
+            'pages/realName/index',
+            'pages/payrest/index'
         ],
         window: {
             backgroundTextStyle: 'light',

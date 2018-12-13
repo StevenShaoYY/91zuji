@@ -355,15 +355,33 @@
                     this.toast('请选择付款方式')
                     return
                 }
-                if(this.$mp.platform === 'alipay') {
-                    my.navigateTo({
-                        url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
-                    })
-                } else {
-                    wx.navigateTo({
-                       url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
-                    })
-                }
+                this.POST('userBase/getSimpleInfo', '', res => {
+                    let result = res.data;
+                    console.log(result);
+                    if(result.ok===true) {
+                        if(this.$mp.platform === 'alipay') {
+                            my.navigateTo({
+                                url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                            })
+                        } else {
+                            wx.navigateTo({
+                            url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                            })
+                        }
+                    } else {
+                        if(this.$mp.platform === 'alipay') {
+                            my.navigateTo({
+                                url: `/pages/realName/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                            })
+                        } else {
+                            wx.navigateTo({
+                                url: `/pages/realName/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                            })
+                        }
+                    }
+                },'user');
+                
+                
             },
             switchTabBySwiper (e) {
                 this.activeItem = e.detail.current

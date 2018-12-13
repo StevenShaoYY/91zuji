@@ -65,19 +65,24 @@
         },
         created () {
             this.orderId = this.$mp.query.id
-            this.getOrderDetailTest()
+            this.getOrderDetail()
         },
         methods: {
             getOrderDetail() {
                 this.POST('api/tradeOrder/backInfo', {"orderId": this.orderId}, res => {
-                    let result = res.data.result;
-                    this.orderDetail = result
-                    let productSub = {}
-                    productSub.name = result.tradeOrderGoodsRespDTO.goodsName
-                    productSub.picUrl = result.tradeOrderGoodsRespDTO.picUrl
-                    productSub.descList = result.tradeOrderGoodsRespDTO.specifications
-                    productSub.totalRent = result.totalRentAmount 
-                    this.productSub = productSub
+                    if(res.data.ok){
+                        let result = res.data.result;
+                        this.orderDetail = result
+                        let productSub = {}
+                        productSub.name = result.tradeOrderGoodsRespDTO.goodsName
+                        productSub.picUrl = result.tradeOrderGoodsRespDTO.picUrl
+                        productSub.descList = result.tradeOrderGoodsRespDTO.specifications
+                        productSub.totalRent = result.totalRentAmount 
+                        this.productSub = productSub
+                    } else {
+                        this.toast(res.data.msg)
+                        this.back()
+                    }
                 });
             },
             nextStep() {

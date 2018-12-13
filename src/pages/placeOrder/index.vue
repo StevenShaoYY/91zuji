@@ -86,7 +86,6 @@
             }
         },
         created () {
-            console.log(this.$mp.query)
             this.getAddressList()
             this.getProduct()
         },
