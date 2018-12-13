@@ -72,10 +72,6 @@
         background-color: #ffffff;
         font-family:microsoft yahei;
     }
-    .iconfont {
-        font-family: "iconfont" !important;
-    }
-    .icon-favor:before { content: "\e64c"; }
     .category-scroll {
         // display: flex;
         height: 214rpx;

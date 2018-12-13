@@ -7,6 +7,6 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '91租机'
+        navigationBarTitleText: '我要租'
     }
 }

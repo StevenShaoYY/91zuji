@@ -175,14 +175,11 @@
 .wrapper{
     font-family:microsoft yahei;
     font-size: 26rpx;
-    margin-left: 26rpx;
     background-color: #fff;
     width: 692rpx;
-    margin-left: 29rpx;
+    height: 100vh;
+    padding:80rpx 29rpx;
     line-height: 30rpx;
-}
-.text-container{
-
 }
 .text-container .content{
   font-size: 24rpx;

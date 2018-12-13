@@ -32,8 +32,8 @@ export default {
         window: {
             backgroundTextStyle: 'light',
             navigationBarBackgroundColor: '#fff',
-            navigationBarTitleText: '91租机',
-            defaultTitle: '91租机',
+            navigationBarTitleText: '我要租',
+            defaultTitle: '我要租',
             navigationBarTextStyle: 'black'
         },
         tabBar: {
