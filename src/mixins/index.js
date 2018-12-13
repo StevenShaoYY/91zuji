@@ -55,9 +55,9 @@ export default {
                     break;
             }
             //生产环境
-            // let baseUrl = 'http://fanyou.rank-tech.com:7002'
+            // let baseUrl = 'https://fanyou.rank-tech.com:7002'
             //开发环境
-            let baseUrl = 'http://prod2.fanyoutech.com:7002'
+            let baseUrl = 'https://prod2.fanyoutech.com:7002'
             // let baseUrl = 'http://192.168.0.220:9999'
             if (type === 'user') {
                 url = `${baseUrl}/user/${api}`
@@ -95,6 +95,68 @@ export default {
                     }
                 },
                 data: JSON.stringify(data)
+            })
+        },
+        uploadFile(api, fileType, fileName, filePath, formData,callback, type) {
+            var appInstance = getApp()
+            let globalData = appInstance.globalData;
+            let accToken = globalData.accessToken
+            let {
+                platform
+            } = this.$mp || {},
+                request = () => { }
+            let url = ''
+            switch (platform) {
+                case 'wechat':
+                    request = wx && wx.uploadFile
+                    break;
+                case 'alipay':
+                    request = my && my.uploadFile
+                    break;
+                case 'swan':
+                    request = swan && swan.uploadFile
+                    break;
+                default:
+                    break;
+            }
+            //生产环境
+            // let baseUrl = 'http://fanyou.rank-tech.com:7002'
+            //开发环境
+            let baseUrl = 'http://prod2.fanyoutech.com:7002'
+            // let baseUrl = 'http://192.168.0.220:9999'
+            if (type === 'user') {
+                url = `${baseUrl}/user/${api}`
+            } else {
+                url = `${baseUrl}/mall/${api}`
+            }
+            request && request({
+                header: {
+                    'ACCESS_TOKEN': accToken
+                },
+                url,
+                filePath,
+                fileType, 
+                fileName, 
+                formData,
+                success: callback,
+                fail: (cb) => {
+                    if (this.$mp.platform === 'alipay') {
+                        my.showToast({
+                            type: 'none',
+                            content: '网络请求失败！',
+                            duration: 3000,
+                            success: () => {
+                                console.log('success')
+                            },
+                        });
+                    } else {
+                        wx.showToast({
+                            title: '网络请求失败！',
+                            icon: 'none',
+                            duration: 2000
+                        })
+                    }
+                }
             })
         }
 

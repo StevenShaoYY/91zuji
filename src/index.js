@@ -26,7 +26,8 @@ export default {
             'pages/orderDetail/index',
             'pages/orderList/index',
             'pages/returnDevice/index', 
-            'pages/returnDeviceConfirm/index'
+            'pages/returnDeviceConfirm/index',
+            'pages/realName/index'
         ],
         window: {
             backgroundTextStyle: 'light',

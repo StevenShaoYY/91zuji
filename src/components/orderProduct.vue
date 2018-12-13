@@ -49,6 +49,10 @@
     }
     .sub-item {
       margin: 20rpx 10rpx 15rpx 0;
+      max-width: 100rpx;
+      white-space:nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
       height: 36rpx;
       border: 1px solid #c4c4c4;
       border-radius: 18rpx;

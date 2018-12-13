@@ -21,6 +21,23 @@
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
             <swiper-item>
                 <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
+                    <div class="img-container">
+                        <img mode="widthFix" v-for="(item, index) of goodsDetail.description" :key="index" :data-index="index" class="desc-image" :src="item" background-size="cover"/>
+                    </div>
+                </scroll-view>
+            </swiper-item>
+            <swiper-item>
+                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
+                    <div class="comment-container has-comment" v-if="commentList.length>0">
+                        <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
+                    </div>
+                    <div class="comment-container no-comment-container" v-if="commentList.length==0">
+                        <div class="no-comment">暂无评论</div>
+                    </div>
+                </scroll-view>
+            </swiper-item>
+            <swiper-item>
+                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
                     <section>
                         <div class="zuling-header">租赁流程</div>
                         <div class="zuling-content">选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
@@ -39,23 +56,6 @@
                         <div class="zuling-subheader">买断</div>
                         <div class="zuling-content">租赁到期后可支付买断款买断该商品，买断款以下单时协议里的买断价为准。</div>
                     </section>
-                </scroll-view>
-            </swiper-item>
-            <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    <div class="img-container">
-                        <img mode="widthFix" v-for="(item, index) of goodsDetail.description" :key="index" :data-index="index" class="desc-image" :src="item" background-size="cover"/>
-                    </div>
-                </scroll-view>
-            </swiper-item>
-            <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" scroll-y="true" :style="{height:winHeight+'rpx'}">
-                    <div class="comment-container has-comment" v-if="commentList.length>0">
-                        <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
-                    </div>
-                    <div class="comment-container no-comment-container" v-if="commentList.length==0">
-                        <div class="no-comment">暂无评论</div>
-                    </div>
                 </scroll-view>
             </swiper-item>
         </swiper>
@@ -139,7 +139,7 @@
                     finaceList: [{}]
                 },
                 commentList: [],
-                tabList: ['商品', '详情', '评论'],
+                tabList: ['图文详情', '商品评论', '租赁说明'],
                 activeItem: 0,
                 winHeight: '',
                 openAttr:true,
