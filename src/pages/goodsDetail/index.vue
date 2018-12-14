@@ -356,9 +356,8 @@
                     return
                 }
                 this.POST('userBase/getSimpleInfo', '', res => {
-                    let result = res.data;
-                    console.log(result);
-                    if(result.ok===true) {
+                    let result = res.data.result;
+                    if(result.idCardFrontImage!=null && result.idCardBackImage !=null) {
                         if(this.$mp.platform === 'alipay') {
                             my.navigateTo({
                                 url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`

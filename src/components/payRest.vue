@@ -121,6 +121,10 @@
               type: String,
               default: ''
           },
+          planList: {
+              type: Array,
+              default: []
+          }
         },
         created() {
           this.payAtOnce()
@@ -134,9 +138,10 @@
         methods: {
           payAtOnce() {
             let ddto = {
-              'orderId': this.orderId
+              'orderId': this.orderId,
+              'planIdList': this.planList
             }
-            this.POST('api/tradeOrder/payAtOnce', ddto, res => {
+            this.POST('orderPlan/payPlanList', ddto, res => {
               let result = res.data.result;
               result.amount = result.amount.toFixed(2)
               this.payInfo = result
@@ -147,10 +152,9 @@
                 let payDto = {
                     "amount": this.payInfo.amount,
                     "payInfo": this.payInfo.note,
-                    "planIdList": [],
+                    "planIdList": this.planList,
                     "tradeOrderId": this.orderId
                 }
-                console.log(payDto)
                 this.POST('api/pay/alipayCreateApplet', payDto, res => {
                     let result = res.data.result;
                     if(this.$mp.platform === 'alipay') {

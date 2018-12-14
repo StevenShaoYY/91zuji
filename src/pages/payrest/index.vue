@@ -1,11 +1,11 @@
 <template>
     <div class="wrapper">
-        <div class="select-all">
+        <div class="select-all" @click="clickSelectAll">
             <div  :class="{'selected':selectAll,'not-select':!selectAll} "></div>
             <div class="select-all-text">全选</div>
         </div>
         <div class="main-wrapper">
-            <div v-for="(item, index) in orderPlanList" :key="index" class="pay-item" :class="{'needntpay':item.status,'needpay':!item.status} ">
+            <div @click="selcetNeedPay($event)" :data-index='index' v-for="(item, index) in orderPlanList" :key="index" class="pay-item" :class="{'needntpay':item.status,'needpay':!item.status} ">
                 <div v-if="item.status==0" class="icon-container">
                    <div :class="{'selected':item.selected,'not-select':!item.selected} "></div>
                 </div>
@@ -25,35 +25,110 @@
                 
             </div>
         </div>
-        <div class="botton-btn">立即缴费{{needPayMoney}}</div>
+        <div class="botton-btn" @click='payAtOnce'>立即缴费<span v-if="needPayMoney!=0">({{needPayMoney}})</span></div>
+        <payrest v-if="showPopFlag" :orderId="orderId" :planList="selectPlan" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></payrest>
     </div>
 </template>
 
 <script>
     import mixins from '../../mixins'
-    import CommentCard2 from '../../components/commentCard2.vue';
+    import Payrest from '../../components/payrest.vue';
     export default {
         mpType: 'page', 
         mixins: [mixins], 
         components: {
-            'comment-card2': CommentCard2
+            'payrest': Payrest
         },
         data () {
             return {
                 orderPlanList: [],
-                orderPlanList: '',
-                selectAll: true
+                selectAll: false,
+                needPayMoney: 0,
+                orderId: '',
+                selectPlan: [],
+                showPopFlag: false
             }
         },
         created () {
-            // this.orderId = this.$mp.query.id
-            // this.getPayList()
-            this.getTEstList()
+            if(this.$mp.query.id) {
+                this.orderId = this.$mp.query.id
+            }
+            this.getPayList()
+            // this.getTEstList()
         },
         onPullDownRefresh() {
             this.getPayList()
         },
         methods: {
+            payAtOnce() {
+                this.selectPlan = []
+                for(let item of this.orderPlanList) {
+                    if (!item.status) {
+                        if(item.selected){
+                            this.selectPlan.push(item.id)
+                        }
+                    }
+                }
+                if(this.selectPlan.length <=0 ) {
+                    this.toast('请先选择付款项！')
+                    return 
+                }
+                this.showPopFlag = true
+            },
+            selcetNeedPay(e) {
+                let index = e.target.dataset.index
+                if (!this.orderPlanList[index].status) {
+                    this.orderPlanList[index].selected = !this.orderPlanList[index].selected
+                    if(this.orderPlanList[index].selected==false) {
+                        this.needPayMoney = this.needPayMoney - this.orderPlanList[index].repayAmount
+                    } else {
+                        this.needPayMoney = this.needPayMoney + this.orderPlanList[index].repayAmount
+                    }
+                }
+            },
+            redirectToAddress(url) {
+                if(this.$mp.platform === 'alipay') {
+                    my.redirectTo({
+                        url: url
+                    })
+                } else {
+                    wx.redirectTo({
+                        url: url
+                    })
+                }
+            },
+            closePay() {
+                this.showPopFlag = false
+            },
+            paySuccess() {
+                this.showPopFlag = false
+                this.toast('支付成功！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            payFail() {
+                this.showPopFlag = false
+                this.toast('支付失败！请重新支付！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            payUnknow() {
+                this.showPopFlag = false
+                this.toast('支付处理中！')
+                this.redirectToAddress('/pages/orderList/index')
+            },
+            clickSelectAll() {
+                this.selectAll = !this.selectAll
+                this.needPayMoney = 0
+                for(let item of this.orderPlanList) {
+                    if (!item.status) {
+                        item.selected = this.selectAll
+                        if(this.selectAll){
+                            this.needPayMoney = this.needPayMoney+item.repayAmount
+                        } else {
+                            this.needPayMoney = 0
+                        }
+                    }
+                }
+            },
             getPayList() {
                 let commentDto = {
                     "orderId": this.orderId
@@ -62,6 +137,7 @@
                     let result = res.data.result;
                     for (let i  of result) {
                         i.selected = false
+                        i.repayAmount = parseInt(i.repayAmount)
                     }
                     this.orderPlanList = result;
                     if (this.$mp.platform === 'alipay') {
@@ -139,23 +215,22 @@
     .select-all{
         display: flex;
         flex-direction: row;
-        margin: 20rpx 29rpx;
+        margin: 0 29rpx;
+        padding: 20rpx 0;
     }
     .select-all .select-all-text {
         padding-left: 10rpx;
     }
     .selected{
-        width: 20rpx;
-        height: 20rpx;
-        border-radius: 10rpx;
-        margin-top: 3rpx;
+        width: 36rpx;
+        height: 36rpx;
+        border-radius: 18rpx;
         background-color: #EF6700;
     }
     .not-select{
-        width: 20rpx;
-        height: 20rpx;
-        margin-top: 3rpx;
-        border-radius: 10rpx;
+        width: 32rpx;
+        height: 32rpx;
+        border-radius: 16rpx;
         border: 1px solid #ccc;
     }
     .main-wrapper{

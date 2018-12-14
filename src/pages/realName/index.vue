@@ -85,17 +85,6 @@
                 this.POST('userBase/getSimpleInfo', '', res => {
                     let result = res.data;
                     if(result.ok===true) {
-                        if(this.backUrl!==false) {
-                            if(this.$mp.platform === 'alipay') {
-                                my.redirectTo({
-                                    url: this.backUrl
-                                })
-                            } else {
-                                wx.redirectTo({
-                                    url: this.backUrl
-                                })
-                            }
-                        }
                         if(result.result.idCardBackImage!=null && result.result.idCardFrontImage !=null) {
                             this.userAuthed = true;
                             this.user.address = result.result.frontRespDTO.address;
@@ -105,6 +94,17 @@
                             let numDes = result.result.frontRespDTO.num.substr(0,3) + "***********" + result.result.frontRespDTO.num.substr(-4);
                             this.user.num = numDes;
                             this.user.sex = result.result.frontRespDTO.sex;
+                            if(this.backUrl!==false) {
+                                if(this.$mp.platform === 'alipay') {
+                                    my.redirectTo({
+                                        url: this.backUrl
+                                    })
+                                } else {
+                                    wx.redirectTo({
+                                        url: this.backUrl
+                                    })
+                                }
+                            }
                         } else {
                             this.userNoAuth = true;
                         }
