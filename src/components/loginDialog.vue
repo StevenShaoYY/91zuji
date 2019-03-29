@@ -5,7 +5,8 @@
           <div class="content">您还未登录，点击确定创建用户</div>
           <div class="btn-container">
             <button class="btn sty2" @click="closeDialog">暂不需要</button>
-            <button class="btn sty1" open-type="getAuthorize" @getAuthorize="authorize" @error="onAuthError" scope='phoneNumber'>立即登录</button>
+            <button v-if="platform=='alipay'" class="btn sty1" open-type="getAuthorize" @getAuthorize="authorize" @error="onAuthError" scope='phoneNumber'>立即登录</button>
+            <button v-if="platform=='wechat'" class="btn sty1" open-type="getPhoneNumber" @getphonenumber="getWXPhoneNumber">立即登录</button>
           </div>
       </div>
     </div>
@@ -69,60 +70,54 @@
         props:{
         },
         created() {
+          this.platform = this.$mp.platform
         },
         data () {
             return {
               showPay:false,
-              payInfo: {}
+              payInfo: {},
+              platform: ''
             }
         },
         methods: {
+          getWXPhoneNumber(e) {
+            console.log(e)
+          },
           authorize(){
             if(this.$mp.platform === 'alipay'){
-              this.getNum()
+              if(my.canIUse('button.open-type.getAuthorize'))
+                this.getNum()
+              else
+                this.toast('当前支付宝版本过低，无法使用此功能，请升级最新版本的支付宝')
             }
           },
-          toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
-            },
           getNum() {
             my.getPhoneNumber({
               success: (res) => {
                   let encryptedData = res.response
-                  let dto = {
-                    "authCode": getApp().globalData.authCode,
-                    "responseContent": encryptedData
-                  }
-                  this.POST('userBase/alipayPhone', dto, res => {
-                    let result = res.data.result;
-                    if(result.accessToken && result.accessToken!='') {
-                      getApp().globalData.accessToken = result.accessToken
-                      this.toast('注册成功！')
-                      this.closeDialog()
-                    } else {
-                      this.toast('注册失败！')
-                      this.closeDialog()
-                    }
-                  },'user');
+                  my.getAuthCode({
+                      scopes: 'auth_base',
+                      success: (res) => {
+                          getApp().globalData.authCode = res.authCode
+                          let dto = {
+                            "authCode": res.authCode,
+                            "responseContent": encryptedData
+                          }
+                          this.POST('userBase/alipayPhone', dto, res => {
+                            let result = res.data.result;
+                            if(result.accessToken && result.accessToken!='') {
+                              getApp().globalData.accessToken = result.accessToken
+                              this.toast('注册成功！')
+                              this.closeDialog()
+                            } else {
+                              this.toast('注册失败！')
+                              this.closeDialog()
+                            }
+                          },'user');
+                      },
+                  });
               },
               fail: (res) => {
-                  console.log(res)
-                  console.log('getPhoneNumber_fail')
                   this.toast('获取权限失败！')
               },
             });

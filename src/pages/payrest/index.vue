@@ -4,7 +4,7 @@
             <div  :class="{'selected':selectAll,'not-select':!selectAll} "></div>
             <div class="select-all-text">全选</div>
         </div>
-        <div class="main-wrapper">
+        <scroll-view scroll-y=true class="main-wrapper">
             <div @click="selcetNeedPay($event)" :data-index='index' v-for="(item, index) in orderPlanList" :key="index" class="pay-item" :class="{'needntpay':item.status,'needpay':!item.status} ">
                 <div v-if="item.status==0" class="icon-container">
                    <div :class="{'selected':item.selected,'not-select':!item.selected} "></div>
@@ -22,9 +22,8 @@
                         <div class="gray">{{item.repayDate}}</div>
                     </div>
                 </div>
-                
             </div>
-        </div>
+        </scroll-view>
         <div class="botton-btn" @click='payAtOnce'>立即缴费<span v-if="needPayMoney!=0">({{needPayMoney}})</span></div>
         <payrest v-if="showPopFlag" :orderId="orderId" :planList="selectPlan" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></payrest>
     </div>
@@ -48,6 +47,9 @@
                 selectPlan: [],
                 showPopFlag: false
             }
+        },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
         },
         created () {
             if(this.$mp.query.id) {
@@ -103,17 +105,20 @@
             paySuccess() {
                 this.showPopFlag = false
                 this.toast('支付成功！')
-                this.redirectToAddress('/pages/orderList/index')
+                // this.redirectToAddress('/pages/orderList/index')
+                this.backPage(1)
             },
             payFail() {
                 this.showPopFlag = false
                 this.toast('支付失败！请重新支付！')
-                this.redirectToAddress('/pages/orderList/index')
+                this.backPage(1)
+                // this.redirectToAddress('/pages/orderList/index')
             },
             payUnknow() {
                 this.showPopFlag = false
                 this.toast('支付处理中！')
-                this.redirectToAddress('/pages/orderList/index')
+                this.backPage(1)
+                // this.redirectToAddress('/pages/orderList/index')
             },
             clickSelectAll() {
                 this.selectAll = !this.selectAll
@@ -149,52 +154,22 @@
             },
             getTEstList() {
                 let result = [
-    {
-      "id": 268,
-      "orderId": 515,
-      "userId": 1224,
-      "periodNum": 1,
-      "repayAmount": 0.02,
-      "attachRepayAmount": null,
-      "overdueAmount": null,
-      "actualRepayAmount": 0.02,
-      "repayDate": "2018-12-16 12点之前缴清",
-      "payAmount": 0.03,
-      "payDate": "2018-12-13 16:05:22",
-      "status": 1,
-      "isOverdue": 0
-    },
-    {
-      "id": 269,
-      "orderId": 515,
-      "userId": 1224,
-      "periodNum": 2,
-      "repayAmount": 0.02,
-      "attachRepayAmount": null,
-      "overdueAmount": null,
-      "actualRepayAmount": 0.02,
-      "repayDate": "2019-01-16 12点之前缴清",
-      "payAmount": null,
-      "payDate": null,
-      "status": 0,
-      "isOverdue": 0
-    },
-    {
-      "id": 270,
-      "orderId": 515,
-      "userId": 1224,
-      "periodNum": 3,
-      "repayAmount": 0.02,
-      "attachRepayAmount": null,
-      "overdueAmount": null,
-      "actualRepayAmount": 0.02,
-      "repayDate": "2019-02-16 12点之前缴清",
-      "payAmount": null,
-      "payDate": null,
-      "status": 0,
-      "isOverdue": 0
-    }
-  ]
+                    {
+                    "id": 268,
+                    "orderId": 515,
+                    "userId": 1224,
+                    "periodNum": 1,
+                    "repayAmount": 0.02,
+                    "attachRepayAmount": null,
+                    "overdueAmount": null,
+                    "actualRepayAmount": 0.02,
+                    "repayDate": "2018-12-16 12点之前缴清",
+                    "payAmount": 0.03,
+                    "payDate": "2018-12-13 16:05:22",
+                    "status": 1,
+                    "isOverdue": 0
+                    }
+                ]
                 for (let i  of result) {
                     i.selected = false
                 }
@@ -236,7 +211,7 @@
     .main-wrapper{
         width: 692rpx;
         margin-left: 29rpx;
-        height: calc(100vh - 200rpx);
+        height: calc(100vh - 220rpx);
         border: 1px solid #FAFAFA;
         border-radius: 20rpx;
         box-shadow: 2rpx 2rpx 50rpx #cccccc;

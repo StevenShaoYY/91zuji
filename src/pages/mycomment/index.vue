@@ -29,6 +29,9 @@
         onPullDownRefresh() {
             this.getCommentList()
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         methods: {
             getCommentList() {
                 let commentDto = {

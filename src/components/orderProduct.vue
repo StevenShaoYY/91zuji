@@ -36,6 +36,7 @@
       margin-top: 30rpx;
     }
     .item-container .title {
+      padding-right: 20rpx;
       font-size: 30rpx;
       font-weight: 400;
       white-space:nowrap;

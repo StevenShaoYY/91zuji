@@ -48,6 +48,11 @@
                 <div class="set-text">帮助中心</div>
                 <img class="right" src="/static/images/btn_next_mine.png" alt="">
             </div>
+            <div class="my-set-container" @click="call">
+                <img class="icon" src="/static/images/icon_help_mine.png" alt="">
+                <div class="set-text">联系客服</div>
+                <img class="right" src="/static/images/btn_next_mine.png" alt="">
+            </div>
         </div>
         <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
     </div>
@@ -82,13 +87,27 @@
                 });
             }
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         methods: {
+            call() {
+                if(this.$mp.platform == 'alipay') {
+                    my.makePhoneCall({ 
+                        number: '0571-86507022' 
+                    })
+                } else {
+                    wx.makePhoneCall({
+                        phoneNumber: '0571-86507022'
+                    })
+                }
+            },
             goToUrl(url) {
                 if(!this.checkLogin()){
                     this.showLogin=true
                     return
                 }
-                 if(this.$mp.platform === 'alipay') {
+                if(this.$mp.platform === 'alipay') {
                     my.navigateTo({
                         url: url
                     })
@@ -112,6 +131,7 @@
 
 <style scoped lang="scss">
    .wrapper{
+       height:100vh;
        background-color: #fff;
        font-family:microsoft yahei;
    }

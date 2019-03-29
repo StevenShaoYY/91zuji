@@ -1,5 +1,8 @@
 <template>
     <div class="wrapper">
+        <div class="comment-container no-comment-container" v-if="faqList.length==0">
+            <div class="no-comment">暂无帮助</div>
+        </div>
         <ul class="trans-faq">
             <li class="trans-faq-li" :style="{height:item.height}" :class="{'content-show':item.show}" v-for="(item, index) of faqList" :key="index" :data-index="index"  @click="showDetail($event)">
                 <h2 class="trans-faq-h2">{{item.question}}</h2>
@@ -23,6 +26,9 @@
             return {
                 faqList: []
             }
+        },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
         },
         created () {
             this.POST('issue/list', '', res => {
@@ -79,6 +85,23 @@
        background-color: #fff;
        min-height: 100%;
    }
+   .comment-container {
+        font-family:microsoft yahei;
+        width: 692rpx;
+        margin-left: 29rpx;
+        min-height: calc(100vh - 60rpx);
+        border: 1px solid #FAFAFA;
+        border-radius: 20rpx;
+        box-shadow: 2rpx 2rpx 5rpx #cccccc;
+    }
+    .no-comment-container {
+        font-family:microsoft yahei;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        color: #a8a8a8;
+    }
    .trans-faq{
         width: 692rpx;
         margin: 30rpx 29rpx;

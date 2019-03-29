@@ -12,6 +12,9 @@
                 url:''
             }
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         created () {
             this.POST('api/contract/rawList', '', res => {
                 let result = res.data.result;

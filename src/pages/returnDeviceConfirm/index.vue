@@ -29,17 +29,17 @@
         <div class="rent-container">
             <div class="rent2">
                 <div class="sub">物流公司</div>
-                <div><input class="sub-input" type="text" v-model="returnData.shipChannel" placeholder="请填写物流公司"></div>
+                <div><input class="sub-input" type="text" v-model="returnData.shipChannel" placeholder="请填写物流公司" :disabled='!canchange'></div>
             </div>
             <div class="rent2">
                 <div class="sub">运单编号</div>
-                <div><input class="sub-input" type="text" v-model="returnData.shipSn" placeholder="请填写运单编号"></div>
+                <div><input class="sub-input" type="text" v-model="returnData.shipSn" placeholder="请填写运单编号" :disabled='!canchange'></div>
             </div>
         </div>
         <div class="text-container">
             <p>建议顺丰保价，降低运输风险</p> 
         </div>
-        <div @click="returnOrder" class="startOrder">
+        <div v-if="canchange" @click="returnOrder" class="startOrder">
             确认归还
         </div>
     </scroll-view>
@@ -65,16 +65,28 @@
                 returnData: {
                     shipChannel: '',
                     shipSn: ''
-                }
+                },
+                canchange: true
             }
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         created () {
-            console.log(this.$mp)
-            this.orderId = this.$mp.query.id
+            this.orderId = this.$mp.query.orderId
             this.postCode = this.$mp.query.postCode
             this.address = this.$mp.query.address
             this.mobile = this.$mp.query.mobile
             this.receiveName = this.$mp.query.receiveName
+            if(this.$mp.query.shipChannel!='null' && this.$mp.query.shipChannel!=null) {
+                this.returnData.shipChannel = this.$mp.query.shipChannel
+            }
+            if(this.$mp.query.shipSn!='null' && this.$mp.query.shipSn!=null) {
+                this.returnData.shipSn = this.$mp.query.shipSn
+            }
+            if(this.returnData.shipChannel!=''&& this.returnData.shipSn!=''){
+                this.canchange = false
+            }
         },
         methods: {
             returnOrder() {
@@ -87,35 +99,18 @@
                     return
                 }
                 let dto = {
-                    ...returnData,
+                    ...this.returnData,
                     "orderId": this.orderId
                 }
                 this.POST('api/tradeOrder/back', dto, res => {
                     let result = res.data.result;
                     if (result){
+                        this.toast('归还成功！')
                         this.nextStep()
                     } else {
                         this.toast('归还失败！请重新尝试！')
                     }
                 });
-            },
-            toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
             },
             nextStep() {
                 if(this.$mp.platform == 'alipay') {
@@ -137,6 +132,7 @@
     .wrapper{
         background-color: #ffffff;
         font-family:microsoft yahei;
+        height: 100vh;
     }
     .header-container{
         width: 750rpx;
@@ -212,7 +208,7 @@
         line-height: 80rpx;
         font-weight: 400;
         font-size: 30rpx;
-        position: fixed;
+        position: absolute;
         bottom: 30rpx;
     }
 

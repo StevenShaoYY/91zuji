@@ -45,12 +45,21 @@
             </div>
             <div class="input-emergency-container">
                 <p class="_p">关系</p>
-                <input class="input" type="text" v-model= "submitInfo.emergencyRelation" placeholder="关系">
+                <!-- <input class="input" type="text" v-model= "submitInfo.emergencyRelation" placeholder="关系"> -->
+                <picker  @change="bindPickerChange" :value="index" :range="array">
+                    <view class="pickcontainer" :class="{'gray':submitInfo.emergencyRelation=='关系'}">
+                        {{submitInfo.emergencyRelation}}
+                    </view>
+                </picker>
             </div>
         </div>       
     </scroll-view>
     <div class="bottom-container">
-        <div class="text"><span>点击确认下单代表已同意</span><navigator url="/pages/xieyi/index" class="xieyi">《用户服务及租赁协议》</navigator></div>
+        <div class="text">
+            <checkbox-group class="radio-group" @change="onChangeCheck">
+                <checkbox :value="agressCheck" class="checkbox" color="#EF6700" :checked="agressCheck"/><span>点击确认下单代表已同意</span><navigator url="/pages/xieyi/index" class="xieyi">《用户服务及租赁协议》</navigator>
+            </checkbox-group>
+        </div>
         <div @click="submit" class="botton-btn">确认下单</div>
     </div>
     <pay-pop v-if="showPopFlag" :orderId="orderId" @close="closePay" @paysuccess="paySuccess" @payfail="payFail" @payunknow="payUnknow"></pay-pop>
@@ -79,15 +88,22 @@
                     remark: '',
                     emergencyPhone: '',
                     emergencyName: '',
-                    emergencyRelation: ''
+                    emergencyRelation: '关系'
                 },
                 orderId: '',
-                showPopFlag:false
+                showPopFlag:false,
+                agressCheck: false,
+                array: ['朋友','同学','家人','同事'],
+                index: 0,
+                clickflag: false
             }
         },
         created () {
             this.getAddressList()
             this.getProduct()
+        },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
         },
         methods: {
             getAddressList() {
@@ -148,27 +164,9 @@
                     })
                 }
             },
-            toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
-            },
             ValidatePhone(val){
                 var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;//手机号码
-                var isMob= /^0?1[3|4|5|8][0-9]\d{8}$/;// 座机格式
+                var isMob= /^0?1[2|3|4|5|6|7|8|9][0-9]\d{8}$/;// 座机格式
                 if(isMob.test(val)||isPhone.test(val)){
                     return true;
                 }
@@ -176,21 +174,46 @@
                     return false;
                 }
             },
+            onChangeCheck(e) {
+                this.agressCheck = !this.agressCheck
+            },
+            bindPickerChange(e) {
+                this.index = e.detail.value
+                this.submitInfo.emergencyRelation = this.array[e.detail.value]
+            },
             submit() {
+                if (this.clickflag == true) {
+                    return
+                }
+                this.clickflag = true
+                if(this.agressCheck === false) {
+                    this.toast('请先同意租赁协议！')
+                    this.clickflag = false
+                    return
+                }
+                if(!this.address.full_region) {
+                    this.toast('请先添加收货地址！')
+                    this.clickflag = false
+                    return
+                }
                 if(this.submitInfo.emergencyPhone === '') {
                     this.toast('请填写紧急联系电话！')
+                    this.clickflag = false
                     return
                 }
                 if(this.submitInfo.emergencyName === '') {
                     this.toast('请填写紧急联系人！')
+                    this.clickflag = false
                     return
                 }
                 if(!this.ValidatePhone(this.submitInfo.emergencyPhone)) {
                     this.toast('请填写正确的紧急联系电话！')
+                    this.clickflag = false
                     return
                 }
-                if(this.submitInfo.emergencyRelation === '') {
-                    this.toast('请填写与紧急联系人关系！')
+                if(this.submitInfo.emergencyRelation === '关系') {
+                    this.toast('请选择与紧急联系人关系！')
+                    this.clickflag = false
                     return
                 }
                 let submitInfo = {
@@ -206,7 +229,47 @@
                     let result = res.data.result;
                     if (result.orderId){
                         this.orderId = result.orderId
-                        this.showPopFlag = true
+                        // this.showPopFlag = true
+                        let queryObj= {
+                            orderId: this.orderId+'',
+                            device: 'applet'    
+                        }
+                        this.POST(`api/pay/fundAuthOrderAppFreeze?orderId=${this.orderId}&device=applet`, queryObj, res => {
+                            let result = res.data.result;
+                            if(result) {
+                                my.tradePay({
+                                    orderStr: result, //完整的支付参数拼接成的字符串，从服务端获取
+                                    success: (res) => {
+                                        if(res.resultCode === '6001') {
+                                            this.toast('授权失败：操作已经取消。')
+                                        } else {
+                                            this.showPopFlag = true
+                                        }
+                                        this.clickflag = false
+                                    },
+                                    fail: (res) => {
+                                        this.toast('支付失败！')
+                                        this.clickflag = false
+                                    }
+                                });
+                            } else {
+                                this.clickflag = false
+                            }
+                        })
+                        // let orderStr = result.orderStr.slice(1,result.orderStr.length-1)
+                        // let orderStr = result.orderStr
+                        // my.tradePay({
+                        //     orderStr: orderStr, //完整的支付参数拼接成的字符串，从服务端获取
+                        //     success: (res) => {
+                        //         console.log(res)
+                        //         this.showPopFlag = true
+                        //     },
+                        //     fail: (res) => {
+                        //         this.toast('支付失败！')
+                        //     }
+                        // });
+                    } else {
+                        this.clickflag = false
                     }
                 });
             },
@@ -280,9 +343,18 @@
         line-height: 60rpx;
         color: #9D9D9D;
     }
+    .gray {
+        color: #ccc
+    }
     .address-container .right {
        width: 17rpx;
        height: 28rpx;
+    }
+    .checkbox{
+        border-radius: 22rpx;
+        vertical-align:middle;
+        margin-bottom: 2.5rpx;
+        margin-right: 10rpx;
     }
     .product-detail-container {
         width: 652rpx;
@@ -368,6 +440,14 @@
         width: 88%;
         font-size: 26rpx;
         line-height: 80rpx;
+        height: 80rpx;
+    }
+    .pickcontainer{
+        width: 562rpx;
+        font-size: 26rpx;
+        line-height: 80rpx;
+        margin-top: 4rpx;
+        padding-left: 4rpx;
         height: 80rpx;
     }
     .emergency-container .input-emergency-container + .input-emergency-container{

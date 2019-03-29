@@ -40,7 +40,7 @@
             <p>1.我们收到货品后会检测,质检结果会同步到归还进度里,代缴金额的账号也会罗列在您个人中心的缴费计划里。</p> 
             <p style="margin-top:20rpx">2.逾期或违约,或将影响您的芝麻信用。</p>
         </div>
-        <div @click="nextStep" class="startOrder">
+        <div @click="nextStep" class="startOrder" :class="{'grayOrder':canClick==false}">
             下一步
         </div>
     </scroll-view>
@@ -56,15 +56,19 @@
         components: {
             'order-product': OrderProduct
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         data () {
             return {
                 productSub: {},
                 orderDetail: {},
-                orderId: ''
+                orderId: '',
+                canClick:true
             }
         },
         created () {
-            this.orderId = this.$mp.query.id
+            this.orderId = this.$mp.query.orderId
             this.getOrderDetail()
         },
         methods: {
@@ -80,19 +84,24 @@
                         productSub.totalRent = result.totalRentAmount 
                         this.productSub = productSub
                     } else {
+                        this.canClick = false
                         this.toast(res.data.msg)
-                        this.back()
                     }
                 });
             },
             nextStep() {
+                console.log(this.canClick)
+                if(this.canClick==false) {
+                    return 0
+                }
+                console.log(1111)
                 if(this.$mp.platform == 'alipay') {
                     my.navigateTo({
-                        url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}`
+                        url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}&shipChannel=${this.orderDetail.shipChannel}&shipSn=${this.orderDetail.shipSn}`
                     })
                     } else {
                     wx.navigateTo({
-                        url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}`
+                        url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}&shipChannel=${this.orderDetail.shipChannel}&shipSn=${this.orderDetail.shipSn}`
                     })
                 }
             },
@@ -139,6 +148,7 @@
     .wrapper{
         background-color: #ffffff;
         font-family:microsoft yahei;
+        height: 100vh;
     }
     .header-container{
         width: 750rpx;
@@ -231,8 +241,11 @@
         line-height: 80rpx;
         font-weight: 400;
         font-size: 30rpx;
-        position: fixed;
+        position: absolute;
         bottom: 30rpx;
+    }
+    .grayOrder{
+        background-color: #aaa;
     }
 
 </style>

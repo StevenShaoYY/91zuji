@@ -155,7 +155,7 @@
                     "planIdList": this.planList,
                     "tradeOrderId": this.orderId
                 }
-                this.POST('api/pay/alipayCreateApplet', payDto, res => {
+                this.POST('api/pay/planAliPayCreateApplet', payDto, res => {
                     let result = res.data.result;
                     if(this.$mp.platform === 'alipay') {
                         my.tradePay({

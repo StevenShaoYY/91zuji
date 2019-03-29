@@ -24,6 +24,9 @@
             'yx-slider': YXSlider,
             'topic': Topic
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         data () {
             return {
                 YXBanners: [],

@@ -74,6 +74,9 @@
             }
             this.getOrderData()
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         onPullDownRefresh() {
             let sta = this.tabList[this.activeItem].status
             this.getOrderByStatus(sta, this.activeItem)
@@ -95,6 +98,7 @@
                 });
             },
             getOrderByStatus(sta ,index) {
+                this.detailList[index].data = []
                 let dto = {
                     "orderStatus": sta,
                     "pageNum": 0,

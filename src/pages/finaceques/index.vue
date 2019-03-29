@@ -24,6 +24,9 @@
                 
             }
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         created () {
         },
         methods: {

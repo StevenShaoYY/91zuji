@@ -18,13 +18,25 @@
             },'user');
           },
         });
+      } else {
+        wx.login({
+          success: res => {
+            console.log(res)
+            this.POST('userBase/v1.0/wxLogin', {'code': res.code} ,res => {
+              let result = res.data.result;
+              if(result.accessToken && result.accessToken!==''){
+                getApp().globalData.accessToken = result.accessToken
+              }
+            }, 'user')
+          }
+        })
       }
     },
     globalData() {
       return {
         a: 100,
         authCode:'',
-        accessToken: ''
+        accessToken: ""
       }
     }
   }

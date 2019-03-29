@@ -28,16 +28,6 @@
             </swiper-item>
             <swiper-item>
                 <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
-                    <div class="comment-container has-comment" v-if="commentList.length>0">
-                        <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
-                    </div>
-                    <div class="comment-container no-comment-container" v-if="commentList.length==0">
-                        <div class="no-comment">暂无评论</div>
-                    </div>
-                </scroll-view>
-            </swiper-item>
-            <swiper-item>
-                <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
                     <section>
                         <div class="zuling-header">租赁流程</div>
                         <div class="zuling-content">选择商品 -- 下单审核 -- 首期支付 -- 发货 -- 月付租金 -- 归还商品</div>
@@ -52,10 +42,20 @@
                         <div class="zuling-subheader">收货须知</div>
                         <div class="zuling-content">身份证正反面复印件以确认本人收货，并交由快递小哥寄回本平台制定地点存档</div>
                         <div class="zuling-subheader">租金</div>
-                        <div class="zuling-content">用户需按月支付租金，需开通支付宝免密制度协议，平台每月将自动从支付宝账号中扣除相应租金。用户也可提前主动支付剩下的租金</div>
+                        <div class="zuling-content">用户需按月支付租金，平台将在每月账单日发出账单提醒，用户需登录账户支付该月租金，请避免逾期对您产生的信用影响。</div>
                         <div class="zuling-subheader">买断</div>
                         <div class="zuling-content">租赁到期后可支付买断款买断该商品，买断款以下单时协议里的买断价为准。</div>
                     </section>
+                </scroll-view>
+            </swiper-item>
+            <swiper-item>
+                <scroll-view @scroll="scrollEvent($event)" :scroll-y="canScroll" :style="{height:winHeight+'rpx'}">
+                    <div class="comment-container has-comment" v-if="commentList.length>0">
+                        <comment-card v-for="(item, index) of commentList" :key="index" :commentItem="item"></comment-card>
+                    </div>
+                    <div class="comment-container no-comment-container" v-if="commentList.length==0">
+                        <div class="no-comment">暂无评论</div>
+                    </div>
                 </scroll-view>
             </swiper-item>
         </swiper>
@@ -63,11 +63,16 @@
             <view class="l-collect" >
                 <img @click="collect()" class="icon" :src="coloctIcon"/>
             </view>
+            <view class="l-collect l-collect2" >
+                <img @click="call()" class="icon" src="/static/images/btn_call_contact.png"/>
+            </view>
             <view @click="showDialog($event)" class="select-guige">立即租赁</view>
         </view>
-        <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
+        
     </view>
-       <div class="attr-pop-box" :hidden="openAttr" catchtouchmove="ture">
+    <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
+    <!--  catchtouchmove="true" -->
+       <div class="attr-pop-box" :hidden="openAttr">
             <div class="attr-pop">
                 <div class="img-info">
                     <div class="close" @click="closeAttr">
@@ -87,7 +92,8 @@
                         <div class="spec-item" v-for="(item, index) of goodsDetail.specificationList" :key="index" :data-index="index">
                             <div class="name">{{item.name}}</div>
                             <div class="values">
-                                <div :class="iitem.checked ? iitem.checked=='noexist'?'value unexist-value':'selected value' : 'value'"  @click="selectproduct" v-for="(iitem, iindex) of item.specificationLists" :key="iindex" :data-index="iindex" :data-name-id="iitem.name" :data-sername-id="iitem.serName">{{iitem.name}}</div>
+                                <!-- <div :class="iitem.checked ? iitem.checked=='noexist'?'value unexist-value':'selected value' : 'value'"  @click="selectproduct" v-for="(iitem, iindex) of item.specificationLists" :key="iindex" :data-index="iindex" :data-name-id="iitem.name" :data-sername-id="iitem.serName">{{iitem.name}}</div> -->
+                                <div class="value" :class="{'unexist-value':iitem.checked=='noexist','selected':iitem.checked==true}"  @click="selectproduct" v-for="(iitem, iindex) of item.specificationLists" :key="iindex" :data-index="iindex" :data-name-id="iitem.name" :data-sername-id="iitem.serName">{{iitem.name}}</div>
                             </div>
                         </div>
                         <div class="spec-item">
@@ -138,7 +144,7 @@
                     finaceList: [{}]
                 },
                 commentList: [],
-                tabList: ['图文详情', '商品评论', '租赁说明'],
+                tabList: ['图文详情', '租赁说明', '商品评论'],
                 activeItem: 0,
                 winHeight: '',
                 openAttr:true,
@@ -251,6 +257,9 @@
                 //  }]
             });
         },
+        onShareAppMessage() {
+            return this.shareMessage(`/pages/goodsDetail/index?id=${this.$mp.query.id}`)
+        },
         methods: {
             scrollByPlat(da) {
                 if(this.$mp.platform === 'alipay') {
@@ -284,6 +293,17 @@
                     return true
                 }
             },
+            call() {
+                if(this.$mp.platform == 'alipay') {
+                    my.makePhoneCall({ 
+                        number: '0571-86507022' 
+                    })
+                } else {
+                    wx.makePhoneCall({
+                        phoneNumber: '0571-86507022'
+                    })
+                }
+            },
             toastComfirm() {
                 if(this.$mp.platform == 'alipay') {
                     my.confirm({
@@ -315,25 +335,10 @@
                     });
                 }
             },  
-            toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
-            },
             placeOrder() {
+                if(!this.goodsDetail.finaceList) {
+                    return
+                }
                 let finaceList = this.goodsDetail.finaceList
                 let finaceSelected = false
                 let proGuige = this.isCheckedAllSpec()
@@ -352,21 +357,49 @@
                     return
                 }
                 if(finaceSelected === false) {
-                    this.toast('请选择付款方式')
+                    this.toast('请选择意外保障')
+                    return
+                }
+                if(!this.checkLogin()){
+                    this.showLogin=true
                     return
                 }
                 this.POST('userBase/getSimpleInfo', '', res => {
                     let result = res.data.result;
-                    if(result.idCardFrontImage!=null && result.idCardBackImage !=null) {
+                    if(result.isIdCardFront===true) {
+                    // if(true){
                         if(this.$mp.platform === 'alipay') {
                             my.navigateTo({
                                 url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
                             })
                         } else {
                             wx.navigateTo({
-                            url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                                url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
                             })
                         }
+                        // this.POST('userBase/checkBankBind', '', res => {
+                        //     if(!res.data.result) {
+                        //         if(this.$mp.platform === 'alipay') {
+                        //             my.navigateTo({
+                        //                 url: `/pages/bindcard/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                        //             })
+                        //         } else {
+                        //             wx.navigateTo({
+                        //             url: `/pages/bindcard/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                        //             })
+                        //         }                                    
+                        //     } else {
+                        //         if(this.$mp.platform === 'alipay') {
+                        //             my.navigateTo({
+                        //                 url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                        //             })
+                        //         } else {
+                        //             wx.navigateTo({
+                        //                 url: `/pages/placeOrder/index?id=${this.$mp.query.id}&guige=${proGuige}&rentTime=${this.hasRentSelected}&finace=${finaceSelected}`
+                        //             })
+                        //         }
+                        //     }
+                        // },'user')
                     } else {
                         if(this.$mp.platform === 'alipay') {
                             my.navigateTo({
@@ -379,8 +412,6 @@
                         }
                     }
                 },'user');
-                
-                
             },
             switchTabBySwiper (e) {
                 this.activeItem = e.detail.current
@@ -389,24 +420,20 @@
                 this.activeItem = index
             },
             showDialog(e) {
-                if(!this.checkLogin()){
-                    this.showLogin=true
-                    return
-                }
                 this.openAttr = false;
                 this.canScroll = false;
-                this.divStyle = 'top:0rpx;left:0px;width:100%;height:100%;overflow:hidden;position:fixed;z-index:0;'
+                this.divStyle = 'top:0rpx;left:0px;width:100%;height:100%;overflow:hidden;position:fixed;'
             },
             closeAttr () {
                 this.canScroll = true
                 this.openAttr = true;
                 this.divStyle = ''
             },
+
+            // 规格选择
             selectproduct(e) {
                 //1.点击改变样式
                 //2.检查是否有货
-                // console.log(e)
-                // console.log(this.goodsDetail.specificationList)
                 let checkedValues = [];
                 let _specificationList = this.goodsDetail.specificationList;
                 let specNameId = e.currentTarget.dataset.index;
@@ -464,6 +491,9 @@
                 this.allResultArr = res
             },
             getSelectItem () {
+                if(this.goodsDetail.specificationList == null) {
+                    return false
+                }
                 let _specificationListTemp = this.goodsDetail.specificationList;
                 let selectItem = []
                 for (let i of _specificationListTemp) {
@@ -505,10 +535,10 @@
                         }
                         copy[i] = item
                         let curr = this.trimSpliter(copy)
-                        data1.specificationLists[j].checked = 'noexist'
                         if(this.allResultArr[curr]) {
-                            // console.log(this.allResultArr[curr])
                             data1.specificationLists[j].checked = false
+                        } else {
+                            data1.specificationLists[j].checked = 'noexist'
                         }
                     }  
                 }
@@ -517,6 +547,9 @@
             // 判断规格是否选择完整(每一种至少选择一项)，加入购物车前进行判断
             isCheckedAllSpec () {
                 let selectItem = this.getSelectItem()
+                if(selectItem === false) {
+                    return false
+                }
                 for (let j of selectItem) {
                     if (j === '') {
                         return false
@@ -742,7 +775,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-left: 60rpx;
+        margin-left: 40rpx;
+    }
+    .l-collect2{
+        margin-right: 40rpx;
     }
     .l-collect .icon {
         width: 54rpx;

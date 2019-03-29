@@ -88,6 +88,9 @@
             this.getAddressList()
             this.getRegionList(0)
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         methods: {
             addAddress() {
                 if(this.address.name == '') {
@@ -114,23 +117,32 @@
                     let result = res.data.result;
                     this.toast('编辑成功！')
                     if(this.$mp.query.from && this.$mp.query.from=='order') {
-                        let stack = getCurrentPages()
-                        let pre = stack[stack.length-2]
-                        if(this.$mp.platform === 'alipay') {
-                            my.navigateBack({
-                                delta: 1,
-                                success: () => {
-                                    pre.rootVM.address = this.address
-                                }
-                            })
-                        } else {
-                            wx.navigateBack({
-                                delta: 1,
-                                success: () => {
-                                    pre.rootVM.address = this.address
-                                }
-                            })
+                        let commentDto = {
+                            "pageNum": 1,
+                            "pageSize":10
                         }
+                        this.POST('userAddress/list', commentDto, res => {
+                            let result = res.data.result;
+                            result.list[0].full_region = result.list[0].provinceName+ ' '+result.list[0].cityName+' '+result.list[0].areaName
+                            this.address = result.list[0];
+                            let stack = getCurrentPages()
+                            let pre = stack[stack.length-2]
+                            if(this.$mp.platform === 'alipay') {
+                                my.navigateBack({
+                                    delta: 1,
+                                    success: () => {
+                                        pre.rootVM.address = this.address
+                                    }
+                                })
+                            } else {
+                                wx.navigateBack({
+                                    delta: 1,
+                                    success: () => {
+                                        pre.rootVM.address = this.address
+                                    }
+                                })
+                            }
+                        },'user');
                     }        
                 },'user');
             },
@@ -177,27 +189,12 @@
                     }
                 },'user');
             },
-            toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
-            },
             ValidatePhone(val){
                 var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;//手机号码
-                var isMob= /^0?1[3|4|5|8][0-9]\d{8}$/;// 座机格式
+                var isMob= /^0?1[2|3|4|5|6|7|8|9][0-9]\d{8}$/;// 座机格式
+                console.log(val)
+                console.log(isMob.test(val))
+                console.log(isPhone.test(val))
                 if(isMob.test(val)||isPhone.test(val)){
                     return true;
                 }
@@ -382,6 +379,7 @@
 
 <style scoped lang="scss">
     .wrapper{
+        height: 100vh;
         font-family:microsoft yahei;
         background-color: #Ffffff
     }
@@ -416,6 +414,7 @@
         align-items: center
     }
     .add-input {
+        width: 90%;
         font-size: 26rpx;
         color: #363636;
     }

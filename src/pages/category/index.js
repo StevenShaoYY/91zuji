@@ -6,11 +6,11 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '我要租',
+        navigationBarTitleText: '凡有e租',
         pullRefresh: true,
         enablePullDownRefresh: true
-        // "usingComponents": {
-        //     "van-notice-bar": "/vant-weapp/dist/notice-bar/index"
-        // }
+            // "usingComponents": {
+            //     "van-notice-bar": "/vant-weapp/dist/notice-bar/index"
+            // }
     }
 }

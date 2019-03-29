@@ -13,10 +13,10 @@ export default {
         // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去
         pages: [
             'pages/index/index',
-            'pages/goodsDetail/index',
             'pages/finaceques/index',
             'pages/category/index',
             'pages/my/index',
+            'pages/goodsDetail/index',
             'pages/helper/index',
             'pages/mycollect/index',
             'pages/mycomment/index',
@@ -28,13 +28,14 @@ export default {
             'pages/returnDevice/index',
             'pages/returnDeviceConfirm/index',
             'pages/realName/index',
-            'pages/payrest/index'
+            'pages/payrest/index',
+            'pages/bindcard/index',
         ],
         window: {
             backgroundTextStyle: 'light',
             navigationBarBackgroundColor: '#fff',
-            navigationBarTitleText: '我要租',
-            defaultTitle: '我要租',
+            navigationBarTitleText: '凡有e租',
+            defaultTitle: '凡有e租',
             navigationBarTextStyle: 'black'
         },
         tabBar: {

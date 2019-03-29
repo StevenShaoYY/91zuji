@@ -134,6 +134,9 @@
             this.orderId = this.$mp.query.id
             this.getOrderDetail()
         },
+        onShareAppMessage() {
+            return this.shareMessage('/pages/index/index')
+        },
         methods: {
             paySuccess() {
                 this.showPopFlag = false
@@ -173,24 +176,6 @@
                     this.productSub = productSub
                     this.finace = result.tradeOrderAttachRespDTO
                 });
-            },
-            toast(str) {
-                if(this.$mp.platform === 'alipay') {
-                    my.showToast({
-                        type: 'none',
-                        content: str,
-                        duration: 3000,
-                        success: () => {
-                            console.log('success')
-                        },
-                    });
-                } else {
-                    wx.showToast({
-                        title: str,
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
             },
             wuliuShow() {
                 this.wuliuFlag = !this.wuliuFlag
@@ -238,23 +223,23 @@
             returnOrder() {
                 if(this.$mp.platform == 'alipay') {
                     my.navigateTo({
-                        url: `/pages/returnOrder/index?orderId=${this.$mp.query.id}`
+                        url: `/pages/returnDevice/index?orderId=${this.$mp.query.id}`
                     })
                 } else {
                     wx.navigateTo({
-                        url: `/pages/returnOrder/index?orderId=${this.$mp.query.id}`
+                        url: `/pages/returnDevice/index?orderId=${this.$mp.query.id}`
                     })
                 }
             },
             payRest() {
                 if(this.$mp.platform=='alipay'){
-                my.navigateTo({
-                    url: `/pages/payrest/index?id=${this.data.orderId}`
-                })
+                    my.navigateTo({
+                        url: `/pages/payrest/index?id=${this.orderId}`
+                    })
                 } else {
-                wx.navigateTo({
-                    url: `/pages/payrest/index?id=${this.data.orderId}`
-                })
+                    wx.navigateTo({
+                        url: `/pages/payrest/index?id=${this.orderId}`
+                    })
                 }
             },
             cancleOrder() {

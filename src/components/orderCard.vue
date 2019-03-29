@@ -232,11 +232,11 @@
           returnOrder() {
             if(this.$mp.platform == 'alipay') {
               my.navigateTo({
-                url: `/pages/returnOrder/index?orderId=${this.orderId}`
+                url: `/pages/returnDevice/index?orderId=${this.orderId}`
               })
             } else {
               wx.navigateTo({
-                  url: `/pages/returnOrder/index?orderId=${this.orderId}`
+                  url: `/pages/returnDevice/index?orderId=${this.orderId}`
               })
             }
           }
