@@ -81,7 +81,27 @@
         },
         methods: {
           getWXPhoneNumber(e) {
-            console.log(e)
+            wx.login({
+              success: res => {
+                let dto = {
+                  "code": res.code,
+                  "encryptedData": e.detail.encryptedData,
+                  "iv": e.detail.iv
+                }
+                this.POST('userBase/v1.0/wxRegister', dto ,res => {
+                  let result = res.data.result;
+                  if(result && result.accessToken && result.accessToken!='') {
+                    getApp().globalData.accessToken = result.accessToken
+                    this.toast('注册成功！')
+                    this.closeDialog()
+                  } else {
+                    this.toast('注册失败！')
+                    this.closeDialog()
+                  }
+                  
+                }, 'user')
+              }
+            })
           },
           authorize(){
             if(this.$mp.platform === 'alipay'){

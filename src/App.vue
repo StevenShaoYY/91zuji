@@ -21,10 +21,10 @@
       } else {
         wx.login({
           success: res => {
-            console.log(res)
+            getApp().globalData.authCode = res.code
             this.POST('userBase/v1.0/wxLogin', {'code': res.code} ,res => {
               let result = res.data.result;
-              if(result.accessToken && result.accessToken!==''){
+              if(result && result.accessToken && result.accessToken!==''){
                 getApp().globalData.accessToken = result.accessToken
               }
             }, 'user')
@@ -36,6 +36,7 @@
       return {
         a: 100,
         authCode:'',
+        //accessToken: "7b0db29115e84620b6933a5e96459b9a"
         accessToken: ""
       }
     }

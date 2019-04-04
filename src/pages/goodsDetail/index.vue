@@ -280,7 +280,9 @@
                     // this.scrollByPlat(e.detail.scrollTop)
                 }
                 if(!this.hasScrollA &&e.detail.scrollTop<1) {
-                    // this.scrollByPlat(0)
+                    if(this.$mp.platform === 'wechat') {
+                        this.scrollByPlat(0)
+                    }
                     this.hasScrollT = true
                     this.hasScrollB = false
                     // this.scrollByPlat(e.detail.scrollTop)

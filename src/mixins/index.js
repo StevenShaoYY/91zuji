@@ -84,9 +84,9 @@ export default {
             // let baseUrl = 'https://prod2.fanyoutech.com:7003'
             // 测试环境
             // let baseUrl = 'https://prod.fanyoutech.com:7003'
-            // let baseUrl = 'https://test.fanyoutech.com:7002'
+            let baseUrl = 'https://test.fanyoutech.com:7002'
             //31环境
-            let baseUrl = 'https://prod1.fanyoutech.com:7003'
+            // let baseUrl = 'https://prod1.fanyoutech.com:7003'
 
             if (type === 'user') {
                 url = `${baseUrl}/user/${api}`
@@ -167,9 +167,9 @@ export default {
             //开发环境
             // let baseUrl = 'https://prod2.fanyoutech.com:7003'
             // 测试环境
-            // let baseUrl = 'https://test.fanyoutech.com:7002'
+            let baseUrl = 'https://test.fanyoutech.com:7002'
             //31环境
-            let baseUrl = 'https://prod1.fanyoutech.com:7003'
+            // let baseUrl = 'https://prod1.fanyoutech.com:7003'
             if (type === 'user') {
                 url = `${baseUrl}/user/${api}`
             } else {
