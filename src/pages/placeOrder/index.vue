@@ -229,36 +229,36 @@
                     let result = res.data.result;
                     if (result.orderId){
                         this.orderId = result.orderId
-                        // this.showPopFlag = true
-                        let queryObj= {
-                            orderId: this.orderId+'',
-                            device: 'applet'    
-                        }
-                        this.POST(`api/pay/fundAuthOrderAppFreeze?orderId=${this.orderId}&device=applet`, queryObj, res => {
-                            let result = res.data.result;
-                            if(result) {
-                                my.tradePay({
-                                    orderStr: result, //完整的支付参数拼接成的字符串，从服务端获取
-                                    success: (res) => {
-                                        if(res.resultCode === '6001') {
-                                            this.toast('授权失败：操作已经取消。')
-                                        } else {
-                                            this.showPopFlag = true
-                                        }
-                                        this.clickflag = false
-                                    },
-                                    fail: (res) => {
-                                        this.toast('支付失败！')
-                                        this.clickflag = false
-                                    }
-                                });
-                            } else {
-                                this.clickflag = false
-                            }
-                        })
+                        this.showPopFlag = true
+                        // let queryObj= {
+                        //     orderId: this.orderId+'',
+                        //     device: 'applet'    
+                        // }
+                        // this.POST(`api/pay/fundAuthOrderAppFreeze?orderId=${this.orderId}&device=applet`, queryObj, res => {
+                        //     let result = res.data.result;
+                        //     if(result) {
+                        //         my.tradePay({
+                        //             orderStr: result, //完整的支付参数拼接成的字符串，从服务端获取
+                        //             success: (res) => {
+                        //                 if(res.resultCode === '6001') {
+                        //                     this.toast('授权失败：操作已经取消。')
+                        //                 } else {
+                        //                     this.showPopFlag = true
+                        //                 }
+                        //                 this.clickflag = false
+                        //             },
+                        //             fail: (res) => {
+                        //                 this.toast('支付失败！')
+                        //                 this.clickflag = false
+                        //             }
+                        //         });
+                        //     } else {
+                        //         this.clickflag = false
+                        //     }
+                        // })
                         // let orderStr = result.orderStr.slice(1,result.orderStr.length-1)
                         // let orderStr = result.orderStr
-                        // my.tradePay({
+                        // wx.requestPayment({
                         //     orderStr: orderStr, //完整的支付参数拼接成的字符串，从服务端获取
                         //     success: (res) => {
                         //         console.log(res)
@@ -355,6 +355,7 @@
         vertical-align:middle;
         margin-bottom: 2.5rpx;
         margin-right: 10rpx;
+        margin-top: -8rpx;
     }
     .product-detail-container {
         width: 652rpx;

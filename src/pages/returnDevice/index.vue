@@ -90,11 +90,9 @@
                 });
             },
             nextStep() {
-                console.log(this.canClick)
                 if(this.canClick==false) {
                     return 0
                 }
-                console.log(1111)
                 if(this.$mp.platform == 'alipay') {
                     my.navigateTo({
                         url: `/pages/returnDeviceConfirm/index?orderId=${this.orderId}&postCode=${this.orderDetail.postCode}&address=${this.orderDetail.address}&mobile=${this.orderDetail.mobile}&receiveName=${this.orderDetail.receiveName}&shipChannel=${this.orderDetail.shipChannel}&shipSn=${this.orderDetail.shipSn}`

@@ -368,7 +368,8 @@
                 }
                 this.POST('userBase/getSimpleInfo', '', res => {
                     let result = res.data.result;
-                    if(result.isIdCardFront===true) {
+                    // if(result.isIdCardFront)
+                    if((result.idCardFrontImage && result.idCardBackImage) || (result.idCardNo && result.cardName)) {
                     // if(true){
                         if(this.$mp.platform === 'alipay') {
                             my.navigateTo({

@@ -414,7 +414,7 @@
         align-items: center
     }
     .add-input {
-        width: 90%;
+        width: 100%;
         font-size: 26rpx;
         color: #363636;
     }

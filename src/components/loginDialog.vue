@@ -55,6 +55,7 @@
       font-size: 28rpx;
       border: none;
       margin-right: 40rpx;
+      background-color: #fff;
     }
     .pay-main .sty2 {
       color: #BCBCBC;

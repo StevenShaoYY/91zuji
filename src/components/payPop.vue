@@ -150,25 +150,26 @@
                     "planIdList": [],
                     "tradeOrderId": this.orderId
                 }
-                this.POST('api/pay/alipayCreateApplet', payDto, res => {
+                this.POST('api/wxpay/v1.0/wxpayAppletCreate', payDto, res => {
                     let result = res.data.result;
-                    if(this.$mp.platform === 'alipay') {
-                        my.tradePay({
-                            tradeNO: result, // 调用统一收单交易创建接口（alipay.trade.create），获得返回字段支付宝交易号trade_no
-                            success: (res) => {
-                            if(res.resultCode == 9000) {
-                                this.$emit('paysuccess')
-                            } else if(res.resultCode == 4000 || res.resultCode == 6001 || res.resultCode == 6002 || res.resultCode == 99){
-                                this.$emit('payfail')
-                            } else if(res.resultCode == 8000 || res.resultCode == 6004){
-                                this.$emit('payunknow')
-                            }
-                            },
-                            fail: (res) => {
-                                this.$emit('payfail')
-                            }
-                        });
-                    }
+                    console.log(result)
+                    // if(this.$mp.platform === 'alipay') {
+                    //     my.tradePay({
+                    //         tradeNO: result, // 调用统一收单交易创建接口（alipay.trade.create），获得返回字段支付宝交易号trade_no
+                    //         success: (res) => {
+                    //         if(res.resultCode == 9000) {
+                    //             this.$emit('paysuccess')
+                    //         } else if(res.resultCode == 4000 || res.resultCode == 6001 || res.resultCode == 6002 || res.resultCode == 99){
+                    //             this.$emit('payfail')
+                    //         } else if(res.resultCode == 8000 || res.resultCode == 6004){
+                    //             this.$emit('payunknow')
+                    //         }
+                    //         },
+                    //         fail: (res) => {
+                    //             this.$emit('payfail')
+                    //         }
+                    //     });
+                    // }
                 });
           },
           closePay() {
