@@ -152,24 +152,58 @@
                 }
                 this.POST('api/wxpay/v1.0/wxpayAppletCreate', payDto, res => {
                     let result = res.data.result;
+                    result = JSON.parse(result)
                     console.log(result)
-                    // if(this.$mp.platform === 'alipay') {
-                    //     my.tradePay({
-                    //         tradeNO: result, // 调用统一收单交易创建接口（alipay.trade.create），获得返回字段支付宝交易号trade_no
-                    //         success: (res) => {
-                    //         if(res.resultCode == 9000) {
-                    //             this.$emit('paysuccess')
-                    //         } else if(res.resultCode == 4000 || res.resultCode == 6001 || res.resultCode == 6002 || res.resultCode == 99){
-                    //             this.$emit('payfail')
-                    //         } else if(res.resultCode == 8000 || res.resultCode == 6004){
-                    //             this.$emit('payunknow')
-                    //         }
-                    //         },
-                    //         fail: (res) => {
-                    //             this.$emit('payfail')
-                    //         }
-                    //     });
-                    // }
+                    if(this.$mp.platform === 'alipay') {
+                        my.tradePay({
+                            tradeNO: result, // 调用统一收单交易创建接口（alipay.trade.create），获得返回字段支付宝交易号trade_no
+                            success: (res) => {
+                            if(res.resultCode == 9000) {
+                                this.$emit('paysuccess')
+                            } else if(res.resultCode == 4000 || res.resultCode == 6001 || res.resultCode == 6002 || res.resultCode == 99){
+                                this.$emit('payfail')
+                            } else if(res.resultCode == 8000 || res.resultCode == 6004){
+                                this.$emit('payunknow')
+                            }
+                            },
+                            fail: (res) => {
+                                this.$emit('payfail')
+                            }
+                        });
+                    } else {
+                        let timestamp = (new Date()).getTime()
+                        
+                        console.log({
+                            timeStamp: result.mch_id,
+                            // timeStamp: `${timestamp}`,
+                            nonceStr: result.nonce_str,
+                            package: `prepay_id=${result.prepay_id}`,
+                            // package: result.prepay_id,
+                            signType: 'MD5',
+                            paySign: result.sign,
+                            success(res) {
+                                console.log('SUCESS:' + res)
+                            },
+                            fail(res) {
+                                 console.log(res)
+                            }
+                        })
+                        wx.requestPayment({
+                            timeStamp: result.mch_id,
+                            // timeStamp: `${timestamp}`,
+                            nonceStr: result.nonce_str,
+                            package: `prepay_id=${result.prepay_id}`,
+                            // package: result.prepay_id,
+                            signType: 'MD5',
+                            paySign: result.sign,
+                            success(res) {
+                                console.log('SUCESS:' + res)
+                            },
+                            fail(res) {
+                                 console.log(res)
+                            }
+                        })
+                    }
                 });
           },
           closePay() {

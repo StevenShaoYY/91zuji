@@ -85,8 +85,8 @@ export default {
             // 测试环境
             // let baseUrl = 'https://prod.fanyoutech.com:7003'
             let baseUrl = 'https://test.fanyoutech.com:7002'
-            //31环境
-            // let baseUrl = 'https://prod1.fanyoutech.com:7003'
+                //31环境
+                // let baseUrl = 'https://prod1.fanyoutech.com:7003'
 
             if (type === 'user') {
                 url = `${baseUrl}/user/${api}`
@@ -132,6 +132,23 @@ export default {
                                     }, 'user');
                                 },
                             });
+                        } else {
+                            wx.login({
+                                success: res => {
+                                    getApp().globalData.authCode = res.code
+                                    getApp().globalData.accessToken = ''
+                                    this.POST('userBase/v1.0/wxLogin', { 'code': res.code }, res => {
+                                        let result = res.data.result;
+                                        if (result && result.accessToken && result.accessToken !== '') {
+                                            getApp().globalData.accessToken = result.accessToken
+                                        }
+                                        this.toast('您的登录状态过期，即将去往首页......')
+                                        setTimeout(() => {
+                                            this.jump('/pages/index/index')
+                                        }, 1000)
+                                    }, 'user')
+                                }
+                            })
                         }
                     } else {
                         this.toast('网络请求失败！')
@@ -168,8 +185,8 @@ export default {
             // let baseUrl = 'https://prod2.fanyoutech.com:7003'
             // 测试环境
             let baseUrl = 'https://test.fanyoutech.com:7002'
-            //31环境
-            // let baseUrl = 'https://prod1.fanyoutech.com:7003'
+                //31环境
+                // let baseUrl = 'https://prod1.fanyoutech.com:7003'
             if (type === 'user') {
                 url = `${baseUrl}/user/${api}`
             } else {
