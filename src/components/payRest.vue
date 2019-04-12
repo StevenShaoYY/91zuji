@@ -155,7 +155,7 @@
                     "planIdList": this.planList,
                     "tradeOrderId": this.orderId
                 }
-                this.POST('api/pay/planAliPayCreateApplet', payDto, res => {
+                this.POST('api/wxpay/v1.0/wxpayPlanAppletCreate', payDto, res => {
                     let result = res.data.result;
                     if(this.$mp.platform === 'alipay') {
                         my.tradePay({
@@ -173,6 +173,21 @@
                             this.$emit('payfail')
                         }
                         });
+                    } else {
+                        wx.requestPayment({
+                            timeStamp: result.timeStamp,
+                            nonceStr: result.nonceStr,
+                            package: result.package,
+                            signType: 'MD5',
+                            paySign: result.paySign,
+                            success(res) {
+                                if(res.errMsg === 'requestPayment:ok')
+                                    this.$emit('paysuccess')
+                            },
+                            fail(res) {
+                                this.$emit('payfail')
+                            }
+                        })
                     }
                 });
           },

@@ -152,8 +152,6 @@
                 }
                 this.POST('api/wxpay/v1.0/wxpayAppletCreate', payDto, res => {
                     let result = res.data.result;
-                    result = JSON.parse(result)
-                    console.log(result)
                     if(this.$mp.platform === 'alipay') {
                         my.tradePay({
                             tradeNO: result, // 调用统一收单交易创建接口（alipay.trade.create），获得返回字段支付宝交易号trade_no
@@ -171,36 +169,20 @@
                             }
                         });
                     } else {
-                        let timestamp = (new Date()).getTime()
-                        
-                        console.log({
-                            timeStamp: result.mch_id,
-                            // timeStamp: `${timestamp}`,
-                            nonceStr: result.nonce_str,
-                            package: `prepay_id=${result.prepay_id}`,
-                            // package: result.prepay_id,
-                            signType: 'MD5',
-                            paySign: result.sign,
-                            success(res) {
-                                console.log('SUCESS:' + res)
-                            },
-                            fail(res) {
-                                 console.log(res)
-                            }
-                        })
                         wx.requestPayment({
-                            timeStamp: result.mch_id,
+                            timeStamp: result.timeStamp,
                             // timeStamp: `${timestamp}`,
-                            nonceStr: result.nonce_str,
-                            package: `prepay_id=${result.prepay_id}`,
+                            nonceStr: result.nonceStr,
+                            package: result.package,
                             // package: result.prepay_id,
                             signType: 'MD5',
-                            paySign: result.sign,
-                            success(res) {
-                                console.log('SUCESS:' + res)
+                            paySign: result.paySign,
+                            success:(res) => {
+                                if(res.errMsg === 'requestPayment:ok')
+                                    this.$emit('paysuccess')
                             },
-                            fail(res) {
-                                 console.log(res)
+                            fail: (res) => {
+                                this.$emit('payfail')
                             }
                         })
                     }

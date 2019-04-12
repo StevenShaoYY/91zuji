@@ -168,6 +168,11 @@
             /*
             * demo 使用假数据
             */
+            // if(getApp().globalData.goodsId) {
+            //     this.$mp.query.id = getApp().globalData.goodsId
+            // }
+            // console.log(222222)
+            // console.log(getApp().globalData)
             let dto = {
                 "id": this.$mp.query.id
             }

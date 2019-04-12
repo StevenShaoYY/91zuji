@@ -5,6 +5,9 @@
     mpType: 'app',
     mixins: [mixins],
     onLaunch() {
+      if(this.$mp.query && this.$mp.query.id && this.$mp.query.from === 'tuiguang') {
+        this.jump(`/pages/goodsDetail/index?id=${this.$mp.query.id}`)
+      }
       if(this.$mp.platform == 'alipay') {
         my.getAuthCode({
           scopes: 'auth_base',
@@ -37,7 +40,8 @@
         a: 100,
         authCode:'',
         //accessToken: "7b0db29115e84620b6933a5e96459b9a"
-        accessToken: ""
+        accessToken: "",
+        goodsId:''
       }
     }
   }

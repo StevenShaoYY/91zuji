@@ -189,7 +189,8 @@
                         confirmText: '取消订单',
                         cancelText: '暂不需要',
                         success: (result) => {
-                            if(result.comfirm) {
+                            console.log(result)
+                            if(result.confirm) {
                                 this.POST('api/tradeOrder/cancel', {"orderId": order}, res => {
                                    this.$emit('fresh')                                 
                                 });
