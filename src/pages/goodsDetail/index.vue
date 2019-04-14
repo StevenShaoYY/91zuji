@@ -7,12 +7,33 @@
                     <img class="image" :src="item" background-size="cover"/>
                 </swiper-item>
             </swiper>
-            <div class="goods-title">{{goodsDetail.name}}</div>
+        </section>
+        <div>
+            <!-- <img v-if="dl==false" class="zm-bg" src="/static/images/zm.png" /> -->
+            <img class="zm-bg" src="/static/images/zm.png" />
             <div class="goods-price-container">
-                <div class="rent-price">¥<span class="big-price">{{goodsDetail.rentPrice}}</span><span class="normal-font">/{{goodsDetail.periodUnit}}</span></div>
+                <div class="rent-price">¥<span class="big-price">{{goodsDetail.rentPrice}}</span><span class="normal-font">元/{{goodsDetail.periodUnit}}</span></div>
                 <div class="total-price">商品价值：¥{{goodsDetail.retailPrice}}</div>
             </div>
-        </section>
+            <div class="goods-title"><span class="new-con">全新</span>{{goodsDetail.name}}</div>
+        </div>
+        <div class="tb-con" @click="showDl">
+            <div class="g-item">
+                <img class="gou-bg" src="/static/images/GOU.png" />
+                <p class="_pp">芝麻信用免押金</p>
+            </div>
+            <div class="g-item">
+                <img class="gou-bg" src="/static/images/GOU.png" />
+                <p class="_pp">正品保证</p>
+            </div>
+            <div class="g-item">
+                <img class="gou-bg" src="/static/images/GOU.png" />
+                <p class="_pp">急速发货</p>
+            </div>
+            <div class="right-icon">
+                <img class="rg-bg" src="/static/images/rgh.png" />
+            </div>
+        </div>
         <ul class="tab-list">
             <li class="ta-li" v-for="(item,index) of tabList" :key="index" :class="{'active':index==activeItem}" @click="switchTab(index)">
             {{item}}
@@ -60,14 +81,51 @@
             </swiper-item>
         </swiper>
         <view class="bottom-btn">
-            <view class="l-collect" >
-                <img @click="collect()" class="icon" :src="coloctIcon"/>
-            </view>
             <view class="l-collect l-collect2" >
-                <img @click="call()" class="icon" src="/static/images/btn_call_contact.png"/>
+                <img @click="call()" class="icon22" src="/static/images/btn_call_contact1.png"/>
+                <p style="color:#909090;font-size:24rpx;margin-top:5rpx;">客服</p>
+            </view>
+            <view class="l-collect" >
+                <img @click="collect()" class="icon23" :src="coloctIcon"/>
+                <p style="color:#909090;font-size:24rpx;margin-top:5rpx;">收藏</p>
             </view>
             <view @click="showDialog($event)" class="select-guige">立即租赁</view>
         </view>
+        <div class="dl" v-if="dl==true">
+            <div class="yinying"></div>
+            <div class="main-ccon">
+                <div class="fwsm">服务说明</div>
+                <div class="item">
+                    <div class="item-line1">
+                        <img class="gou-bg" src="/static/images/GOU.png" />
+                        <p class="_pp">芝麻信用免押金</p>
+                    </div>
+                    <p class="normal-pp">信用好，有机会享受押金全免优惠</p>
+                </div>
+                <div class="item">
+                    <div class="item-line1">
+                        <img class="gou-bg" src="/static/images/GOU.png" />
+                        <p class="_pp">正品保证</p>
+                    </div>
+                    <p class="normal-pp">100%正品保证，杜绝一切假货，让你购物无忧</p>
+                </div>
+                <div class="item">
+                    <div class="item-line1">
+                        <img class="gou-bg" src="/static/images/GOU.png" />
+                        <p class="_pp">急速发货</p>
+                    </div>
+                    <p class="normal-pp">下单后24小时内发货</p>
+                </div>
+                <div class="item">
+                    <div class="item-line1">
+                        <img class="gou-bg" src="/static/images/GOU.png" />
+                        <p class="_pp">售后无忧</p>
+                    </div>
+                    <p class="normal-pp">租期内非人为损坏e租质保</p>
+                </div>
+                <div class="close-dd" @click="closeDl">关闭</div>
+            </div>
+        </div>
         
     </view>
     <login-dialog v-if="showLogin" @close="showLogin=false"></login-dialog>
@@ -144,7 +202,7 @@
                     finaceList: [{}]
                 },
                 commentList: [],
-                tabList: ['图文详情', '租赁说明', '商品评论'],
+                tabList: ['图文详情', '租赁说明'],
                 activeItem: 0,
                 winHeight: '',
                 openAttr:true,
@@ -161,7 +219,9 @@
                 hasScrollT:false,
                 canScroll: true,
                 divStyle: '',
-                coloctIcon: "/static/images/icon_collect_normal.png"
+                coloctIcon: "/static/images/icon_collect_normal.png",
+                rpxR:'',
+                dl:false,
             }
         },
         created () {
@@ -183,6 +243,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
+                        this.rpxR = rpxR
                         const calc = clientHeight * rpxR-85-130;
                         this.winHeight = calc
                     }
@@ -193,6 +254,7 @@
                         const clientHeight = res.windowHeight
                         const clientWidth = res.windowWidth
                         const rpxR = 750 / clientWidth;
+                        this.rpxR = rpxR
                         const calc = clientHeight * rpxR -85-130;
                         this.winHeight = calc
                     }
@@ -239,28 +301,34 @@
                 this.selectGoods.goodsPrice = this.goodsDetail.retailPrice
                 this.buildResult()
             });
-            this.POST('comment/list', commentDto, res => {
-                let result = res.data.result;
-                this.commentList = result.list
-                // this.commentList = [{
-                //     addTime: '2018-2-12 12:23:30' ,
-                //     content: 'osajdljasdisajd按时大大' ,
-                //     hasPicture: 'false' ,
-                //     id: '2222222' ,
-                //     picUrls:'sssss',
-                //     star:'3' ,
-                //     type:'0' ,
-                //     user : '无动于衷23aa' ,
-                //     userAvatar: '' ,
-                //     userId : '11111' ,
-                //     valueId: '222222'
-                //  }]
-            });
+            // this.POST('comment/list', commentDto, res => {
+            //     let result = res.data.result;
+            //     this.commentList = result.list
+            //     // this.commentList = [{
+            //     //     addTime: '2018-2-12 12:23:30' ,
+            //     //     content: 'osajdljasdisajd按时大大' ,
+            //     //     hasPicture: 'false' ,
+            //     //     id: '2222222' ,
+            //     //     picUrls:'sssss',
+            //     //     star:'3' ,
+            //     //     type:'0' ,
+            //     //     user : '无动于衷23aa' ,
+            //     //     userAvatar: '' ,
+            //     //     userId : '11111' ,
+            //     //     valueId: '222222'
+            //     //  }]
+            // });
         },
         onShareAppMessage() {
             return this.shareMessage(`/pages/goodsDetail/index?id=${this.$mp.query.id}`)
         },
         methods: {
+            showDl(){
+                this.dl=true
+            },
+            closeDl(){
+                this.dl=false
+            },
             scrollByPlat(da) {
                 if(this.$mp.platform === 'alipay') {
                     my.pageScrollTo({
@@ -273,8 +341,16 @@
                 }
             },
             scrollEvent(e) {
+                console.log(e)
                 if(!this.hasScrollB &&e.detail.scrollTop>1) {
-                    this.scrollByPlat(410)
+                    
+                      console.log(this.rpxR)
+                    if(this.rpxR>=2){
+                      this.scrollByPlat(500)
+                      console.log(1111)
+                    } else {
+                      this.scrollByPlat(550)  
+                    }
                     this.hasScrollB = true
                     this.hasScrollT = false
                     // this.scrollByPlat(e.detail.scrollTop)
@@ -628,6 +704,66 @@
 
 
 <style scoped lang="scss">
+    .dl{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999999;
+        touch-action: none;
+    }
+    .dl .yinying{
+        width: 100%;
+        z-index: 999999;
+        height: 46%;
+        background-color: rgba(0,0,0,0.3)
+    }
+    .dl .main-ccon{
+        width: 100%;
+        z-index: 999999;
+        height: 54%;
+        background-color: rgba(255,255,255,1);
+    }
+    .dl .main-ccon .fwsm{
+        text-align: center;
+        font-size: 30rpx;
+        font-weight: 700;
+        color: #323232;
+        padding-top: 30rpx;
+    }
+    .dl .main-ccon .item{
+        margin-left: 20rpx;
+        margin-top: 40rpx;
+    }
+    .dl .main-ccon .item-line1{
+        display: flex;
+    }
+    .dl .main-ccon .item-line1 .gou-bg{
+        width: 24rpx;
+        height: 24rpx;
+    }
+    .dl .main-ccon .item-line1 ._pp {
+        padding-left: 12rpx;
+        font-size: 24rpx;
+        color: #323232;
+    }
+    .dl .main-ccon .normal-pp{
+        margin-top: 20rpx;
+        font-size: 20rpx;
+        color: #909090;
+    }
+    .close-dd{
+        width: 100%;
+        height: 98rpx;;
+        text-align: center;
+        font-size: 30rpx;
+        line-height: 98rpx;
+        color: #323232;
+        position: absolute;
+        bottom: 0;
+        border-top: 10rpx solid rgb(248,248,248);
+    }
     .container {
         background-color: #ffffff;
         font-family:microsoft yahei;
@@ -644,15 +780,31 @@
         font-size: 28rpx;
         line-height: 50rpx;
         color: #a8a8a8;
-        border-radius: 25rpx;
+        // border-radius: 25rpx;
         width: 160rpx;
         text-align:center;
         // border: 1rpx solid #FFFFFF;
     }
     .tab-list .active {
-      border: 1rpx solid #f6f6f6;
-      box-shadow: 4rpx 4rpx 20rpx #cccccc;
-      color:#1b1b1b;
+    //   border: 1rpx solid #f6f6f6;
+    //   box-shadow: 4rpx 4rpx 20rpx #cccccc;
+      color:#ff7101;
+    //   border-bottom: 2rpx solid #ff7101;
+    }
+    .tab-list .active::after{
+        content: '';
+        display: block;
+        width: 50rpx;
+        background-color: #ff7101;
+        height: 4rpx;
+        border-radius: 2rpx;
+        margin-left: 60rpx;
+        margin-top: 5rpx;
+    }
+    .zm-bg{
+        width: 750rpx;
+        height: 91rpx;
+        margin-top: 30rpx;
     }
     .swiper-container{
         margin-bottom: 140rpx;
@@ -688,26 +840,31 @@
         background-color: #ffffff;
         // height: 700rpx;
         margin-left: 29rpx;
-        border: 1px solid #FAFAFA;
-        border-radius: 20rpx;
+        // border: 1px solid #FAFAFA;
+        // border-radius: 20rpx;
         margin-top: 20rpx;
-        box-shadow: 2rpx 2rpx 50rpx #cccccc;
+        display: flex;
+        justify-content: center;
+        // sbox-shadow: 2rpx 2rpx 50rpx #cccccc;
     }
     .goodsimgs {
-        width:450rpx;
-        height: 450rpx;
-        margin-left: 121rpx;
-        margin-top: 20rpx;
+        width:550rpx;
+        height: 570rpx;
+        // margin-left: 121rpx;
+        // margin-top: 20rpx;
     }
     .goodsimgs .image{
-        width: 450rpx;
-        height: 450rpx;
+        width: 550rpx;
+        height:550rpx;
         // height: 100%;
     }
     .goods-title {
-        font-weight: 700;
+        // font-weight: 700;
+        font-size: 28rpx;
+        color: #323232;
         margin-left: 30rpx;
         margin-right: 30rpx;
+        line-height: 50rpx;
         margin-top: 20rpx;
     }
     .goods-price-container {
@@ -723,16 +880,57 @@
         // line-height: 30rpx;
     }
     .rent-price .big-price {
-        font-size: 50rpx;
+        font-size: 56rpx;
     }
     .rent-price .normal-font {
-        color: #a8a8a8;
+        padding-left: 5rpx;
+        color: #FF6900;
+    }
+    .new-con{
+        color: #fff;
+        display: inline-block;
+        background-color: #FF6900;
+        padding: 0rpx 20rpx;
+        line-height: 40rpx;
+        border-radius: 7rpx;
+        margin-right: 8rpx;
+        font-weight: 100;
     }
     .total-price {
         font-size: 24rpx;
         color: #a8a8a8;
         margin-top: 40rpx;
         // line-height: 45rpx;
+    }
+
+    .tb-con{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 84rpx;
+        border-top: 1rpx solid #f2f2f2;
+        border-bottom: 10rpx solid #f2f2f2;
+        margin-top: 30rpx;
+        padding: 0 28rpx;
+    }
+    .tb-con .g-item{
+        display: flex;
+    }
+    .tb-con .g-item .gou-bg{
+        width: 24rpx;
+        height: 24rpx;
+    }
+    .tb-con .g-item ._pp {
+        padding-left: 12rpx;
+        font-size: 20rpx;
+        color: #909090;
+    }
+    .right-icon{
+
+    }
+    .right-icon .rg-bg {
+        width: 12rpx;
+        height: 20rpx;
     }
     // --ww
     // .total-price {
@@ -773,14 +971,23 @@
     }
     .l-collect {
         height: 100rpx; 
-        width: 54rpx;
+        width: 100rpx;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         margin-left: 40rpx;
     }
+    .icon22{
+        width: 30rpx;
+        height: 34rpx;
+    }
+    .icon23{
+        width: 33rpx;
+        height: 31rpx;
+    }
     .l-collect2{
-        margin-right: 40rpx;
+        
     }
     .l-collect .icon {
         width: 54rpx;
@@ -790,13 +997,13 @@
         background-color: #FF7000;
         color:#ffffff;
         text-align: center;
-        height: 80rpx;
-        border-radius: 40rpx;
-        width: 595rpx;
-        margin-top: 10rpx;
-        line-height: 80rpx;
-        font-size: 26rpx;
-        margin-right: 15rpx;
+        height: 100rpx;
+        // border-radius: 40rpx;
+        width: 416rpx;
+        // margin-top: 10rpx;
+        line-height: 100rpx;
+        font-size: 30rpx;
+        // margin-right: 15rpx;
     }
     .img-container {
         margin-top: 20rpx;
