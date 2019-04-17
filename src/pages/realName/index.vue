@@ -34,7 +34,8 @@
               <img class="tishi-img" src="/static/images/img_example_second.png" >
               <img class="tishi-img" src="/static/images/img_example_third.png" >
             </div>
-            <div @click="submit" class="botton-btn">芝麻认证</div>
+            <!-- <div @click="submit" class="botton-btn">芝麻认证</div> -->
+            <div @click="submit" class="botton-btn">确定</div>
         </div>
         <div class="realname-authing" v-if="userAuthed">
             <div class="add-item">
@@ -172,76 +173,84 @@
                     this.showTab = 2
             },
             zhimaCom() {
-                this.POST('api/certification/certificationInitializeAliApplet', this.submitInfo, res => {
-                    let bizNo = res.data.result
-                    my.startZMVerify({
-                        bizNo: bizNo,
-                        success: (res) => {
-                            let pass = false
-                            if(res.passed === true)
-                                pass = true
-                            let dto = {
-                                'bizNo': bizNo,
-                                'passed': pass
-                            }
-                            this.POST('api/certification/appletUpdateCertificationStatus', dto, res =>{
-                                if(pass){
-                                    this.userAuthed = true;
-                                    this.userNoAuth = false;
-                                    if(this.backUrl!==false) {
-                                        if(this.$mp.platform === 'alipay') {
-                                            my.redirectTo({
-                                                url: this.backUrl1
-                                            })
-                                        } else {
-                                            wx.redirectTo({
-                                                url: this.backUrl1
-                                            })
-                                        }
-                                    }
-                                } else {
-                                    this.toast('验证失败！')
-                                    // if(this.backUrl!==false) {
-                                    //     if(this.$mp.platform === 'alipay') {
-                                    //         my.navigateBack({
-                                    //             delta: 1
-                                    //         })
-                                    //     } else {
-                                    //         wx.navigateBack({
-                                    //             delta: 1
-                                    //         })
-                                    //     }
-                                    // }
-                                }
+                let dto = {
+                    isAuth: true
+                }
+                this.POST('userBase/v1.2/setAuth', dto, res => {
+                    this.userAuthed = true;
+                    this.userNoAuth = false;
+                    if(this.backUrl!==false) {
+                        if(this.$mp.platform === 'alipay') {
+                            my.redirectTo({
+                                url: this.backUrl1
+                            })
+                        } else {
+                            wx.redirectTo({
+                                url: this.backUrl1
+                            })
+                        }
+                    }
+                },'user')
+                // this.POST('api/certification/certificationInitializeAliApplet', this.submitInfo, res => {
+                //     let bizNo = res.data.result
+                //     my.startZMVerify({
+                //         bizNo: bizNo,
+                //         success: (res) => {
+                //             let pass = false
+                //             if(res.passed === true)
+                //                 pass = true
+                //             let dto = {
+                //                 'bizNo': bizNo,
+                //                 'passed': pass
+                //             }
+                //             this.POST('api/certification/appletUpdateCertificationStatus', dto, res =>{
+                //                 if(pass){
+                //                     this.userAuthed = true;
+                //                     this.userNoAuth = false;
+                //                     if(this.backUrl!==false) {
+                //                         if(this.$mp.platform === 'alipay') {
+                //                             my.redirectTo({
+                //                                 url: this.backUrl1
+                //                             })
+                //                         } else {
+                //                             wx.redirectTo({
+                //                                 url: this.backUrl1
+                //                             })
+                //                         }
+                //                     }
+                //                 } else {
+                //                     this.toast('验证失败！')
+                //                 }
                                 
-                            })
-                        },
-                        fail: (res) => {
-                            let dto = {
-                                'bizNo': bizNo,
-                                'passed': false
-                            }
-                            this.POST('api/certification/appletUpdateCertificationStatus', dto, res =>{
-                                if(this.backUrl!==false) {
-                                    if(this.$mp.platform === 'alipay') {
-                                        my.navigateBack({
-                                            delta: 1
-                                        })
-                                    } else {
-                                        wx.navigateBack({
-                                            delta: 1
-                                        })
-                                    }
-                                }
-                            })
-                        },
-                    });
-                })
+                //             })
+                //         },
+                //         fail: (res) => {
+                //             let dto = {
+                //                 'bizNo': bizNo,
+                //                 'passed': false
+                //             }
+                //             this.POST('api/certification/appletUpdateCertificationStatus', dto, res =>{
+                //                 if(this.backUrl!==false) {
+                //                     if(this.$mp.platform === 'alipay') {
+                //                         my.navigateBack({
+                //                             delta: 1
+                //                         })
+                //                     } else {
+                //                         wx.navigateBack({
+                //                             delta: 1
+                //                         })
+                //                     }
+                //                 }
+                //             })
+                //         },
+                //     });
+                // })
             },
             getUserInfo() {
                 this.POST('userBase/getSimpleInfo', '', res => {
                     let result = res.data;
                     if(result.ok===true) {
+                        // debugger
                         if(result.result.idCardFrontImage!=null) {
                             this.frontUploaded = true
                         }
@@ -275,7 +284,9 @@
                                 certNo: result.result.idCardNo
                             }
                             this.userNoAuth = false;
-                            this.userAuthed = true;
+                            this.userAuthed = true; 
+                            // this.userNoAuth = true;
+                            // this.userAuthed = false;
                         }
                             // no bankcard
                             // if(this.backUrl!==false) {
@@ -332,58 +343,92 @@
                 },'user');
             },
             addPositive() {
-                my.chooseImage({
+                wx.chooseImage({
                     count: 1,
-                    success: (res) => {
-                        my.compressImage({
-                            apFilePaths:res.apFilePaths,
-                            compressLevel:2,
-                            success:(res)=> {
-                                this.imgUrl = res.apFilePaths[0];
-                                this.uploadFile('userBase/idCard/front', "image","file",this.imgUrl,null, res => {
-                                    let result = JSON.parse(res.data);
-                                    if(result.ok===true) {
-                                        this.imgPositive.src = this.imgUrl;
-                                        this.imgPositive.isOk = true;
-                                        this.frontUploaded = true
-                                        this.checkStatus();
-                                    } else {
-                                        this.toast(result.msg)
-                                    }
-                                },'user');
-                            }
-                        })
-                        
+                    success: (res) =>{
+                        this.compressImg(res)
                     }
                 });
-                
+            },
+            compressImg(res){
+                wx.compressImage({
+                    src: res.tempFilePaths[0],
+                    quality: 40,
+                    success: (res) =>{
+                        this.imgUrl = res.tempFilePath;
+                        this.uploadFile('userBase/idCard/front', "image","file",this.imgUrl,null, res => {
+                            console.log(res)
+                            let result = JSON.parse(res.data);
+                            if(result.ok===true) {
+                                this.imgPositive.src = this.imgUrl;
+                                this.imgPositive.isOk = true;
+                                this.frontUploaded = true
+                                this.checkStatus();
+                            } else {
+                                this.toast(result.msg)
+                            }
+                        },'user');
+                    },
+                    fail: res=>{
+                        console.log(res)
+                    }
+                })
             },
             addNegative() {
-                my.chooseImage({
+                 wx.chooseImage({
                     count: 1,
-                    success: (res) => {
-                        my.compressImage({
-                            apFilePaths:res.apFilePaths,
-                            compressLevel:2,
-                            success:(res)=> {
-                                this.imgUrl = res.apFilePaths[0];
-                                this.uploadFile('userBase/idCard/back', "image","file",this.imgUrl,null, res => {
-                                    let result = JSON.parse(res.data);
-                                    if(result.ok===true) {
-                                        this.imgNegative.src = this.imgUrl;
-                                        this.imgNegative.isOk = true;
-                                        this.backUploaded = true
-                                        this.checkStatus();
-                                    } else {
-                                        this.toast(result.msg)
-                                    }
-                                },'user');
-                            }
-                        })
-                        
+                    success: (res) =>{
+                        this.compressBImg(res)
                     }
                 });
+                // my.chooseImage({
+                //     count: 1,
+                //     success: (res) => {
+                //         my.compressImage({
+                //             apFilePaths:res.apFilePaths,
+                //             compressLevel:2,
+                //             success:(res)=> {
+                //                 this.imgUrl = res.apFilePaths[0];
+                //                 this.uploadFile('userBase/idCard/back', "image","file",this.imgUrl,null, res => {
+                //                     let result = JSON.parse(res.data);
+                //                     if(result.ok===true) {
+                //                         this.imgNegative.src = this.imgUrl;
+                //                         this.imgNegative.isOk = true;
+                //                         this.backUploaded = true
+                //                         this.checkStatus();
+                //                     } else {
+                //                         this.toast(result.msg)
+                //                     }
+                //                 },'user');
+                //             }
+                //         })
+                        
+                //     }
+                // });
                 
+            },
+            compressBImg(res){
+                wx.compressImage({
+                    src: res.tempFilePaths[0],
+                    quality: 40,
+                    success: (res) =>{
+                        this.imgUrl = res.tempFilePath;
+                        this.uploadFile('userBase/idCard/back', "image","file",this.imgUrl,null, res => {
+                            let result = JSON.parse(res.data);
+                            if(result.ok===true) {
+                                this.imgNegative.src = this.imgUrl;
+                                this.imgNegative.isOk = true;
+                                this.backUploaded = true
+                                this.checkStatus();
+                            } else {
+                                this.toast(result.msg)
+                            }
+                        },'user');
+                    },
+                    fail: res=>{
+                        console.log(res)
+                    }
+                })
             },
             checkStatus() {
                 if(this.imgPositive.isOk == true && this.imgNegative.isOk == true) {

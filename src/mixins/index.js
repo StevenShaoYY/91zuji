@@ -108,8 +108,29 @@ export default {
                     if (res.data.ok) {
                         callback(res)
                     } else {
-                        this.toast(res.data.msg)
-                        callback(res)
+                        if (res.statusCode == 401) {
+                            if (res.data.msg == "ACCESS_TOKEN无对应信息") {
+                                wx.login({
+                                    success: res => {
+                                        getApp().globalData.authCode = res.code
+                                        getApp().globalData.accessToken = ''
+                                        this.POST('userBase/v1.0/wxLogin', { 'code': res.code }, res => {
+                                            let result = res.data.result;
+                                            if (result && result.accessToken && result.accessToken !== '') {
+                                                getApp().globalData.accessToken = result.accessToken
+                                            }
+                                            this.toast('您的登录状态过期，即将返回......')
+                                            setTimeout(() => {
+                                                this.back()
+                                            }, 1500)
+                                        }, 'user')
+                                    }
+                                })
+                            }
+                        } else {
+                            this.toast(res.data.msg)
+                            callback(res)
+                        }
                     }
                 },
                 fail: (cb) => {
@@ -200,7 +221,7 @@ export default {
                 url,
                 filePath,
                 fileType,
-                fileName,
+                name: fileName,
                 success: callback,
                 fail: (cb) => {
                     if (this.$mp.platform === 'alipay') {

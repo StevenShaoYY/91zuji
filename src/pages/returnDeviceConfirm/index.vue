@@ -73,6 +73,7 @@
             return this.shareMessage('/pages/index/index')
         },
         created () {
+            debugger
             this.orderId = this.$mp.query.orderId
             this.postCode = this.$mp.query.postCode
             this.address = this.$mp.query.address
