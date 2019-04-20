@@ -243,6 +243,7 @@
                 this.selectGoods.rentPrice = this.goodsDetail.rentPrice
                 this.selectGoods.goodsPrice = this.goodsDetail.retailPrice
                 this.buildResult()
+                this.changeSpecInfo()
             });
             this.POST('comment/list', commentDto, res => {
                 let result = res.data.result;

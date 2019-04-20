@@ -7,14 +7,14 @@
         </ul>
         <swiper class="swiper-container" :current="activeItem" duration="300" @change="switchTabBySwiper" :style="{height:winHeight+'rpx'}" skip-hidden-item-layout="true">
             <swiper-item v-for="(item,index) of detailList" :key="index">
-                <scroll-view scroll-y="true" :style="{height:winHeight+'rpx'}" >
+                <div scroll-y="true" class="ddaa" :style="{height:winHeight+'rpx'}" >
                     <div class="comment-container has-comment" v-if="item.data.length>0">
                         <order-card v-for="(item1, index1) of item.data" :key="index1" :data="item1" @fresh="refreshPage"></order-card>
                     </div>
                     <div class="no-order-container" v-if="item.data.length==0">
                         <div class="no-comment">暂无订单</div>
                     </div>
-                </scroll-view>
+                </div>
             </swiper-item>
         </swiper>
     </div>
@@ -134,6 +134,9 @@
 
 
 <style scoped lang="scss">
+    .ddaa{
+        overflow: auto;
+    }
     .container{
         background-color: #fff;
         font-family:microsoft yahei;

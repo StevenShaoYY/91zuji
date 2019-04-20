@@ -14,7 +14,7 @@
                 <p class="_p">身份证号</p>
                 <input class="input" type="text" v-model= "submitInfo.certNo" placeholder="请输入身份证号">
             </div>
-            <div @click="submit" class="botton-btn">芝麻认证</div>
+            <div @click="submit" class="botton-btn">确认</div>
         </div>
         <div class="realname-noauth" v-if="userNoAuth && showTab==1">
             <div class="text-container">
@@ -35,7 +35,7 @@
               <img class="tishi-img" src="/static/images/img_example_third.png" >
             </div>
             <!-- <div @click="submit" class="botton-btn">芝麻认证</div> -->
-            <div @click="submit" class="botton-btn">确定</div>
+            <div @click="submit" class="botton-btn">确认</div>
         </div>
         <div class="realname-authing" v-if="userAuthed">
             <div class="add-item">
@@ -176,7 +176,7 @@
                 let dto = {
                     isAuth: true
                 }
-                this.POST('userBase/v1.2/setAuth', dto, res => {
+                this.POST('userBase/v1.2/setAuth?isAuth=true', dto, res => {
                     this.userAuthed = true;
                     this.userNoAuth = false;
                     if(this.backUrl!==false) {

@@ -78,7 +78,7 @@
                 this.showPopFlag = true
             },
             selcetNeedPay(e) {
-                let index = e.target.dataset.index
+                let index = e.currentTarget.dataset.index
                 if (!this.orderPlanList[index].status) {
                     this.orderPlanList[index].selected = !this.orderPlanList[index].selected
                     if(this.orderPlanList[index].selected==false) {

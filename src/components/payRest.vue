@@ -180,11 +180,11 @@
                             package: result.package,
                             signType: 'MD5',
                             paySign: result.paySign,
-                            success(res) {
+                            success: res => {
                                 if(res.errMsg === 'requestPayment:ok')
                                     this.$emit('paysuccess')
                             },
-                            fail(res) {
+                            fail:res => {
                                 this.$emit('payfail')
                             }
                         })

@@ -2,11 +2,14 @@
     <div class="wrapper">
         <div class="section section1">
             <img class="img" src="/static/images/bg_mine_top.png" background-size="cover" />
-            <div class="avata-container" v-if="!userInfo.avatar">
+            <!-- <div class="avata-container" v-if="!userInfo.avatar">
                 <img class="avata" src="/static/images/img_head_mine.png" background-size="cover" />
-            </div>
-            <div class="avata-container" v-if="userInfo.avatar">
-                <img class="avata" :src="userInfo.avatar" background-size="cover" />
+            </div> -->
+            <button class="btn-img" @getuserinfo="getUserInfoFunc" open-type="getUserInfo" v-if="!userInfo.avatarUrl">
+                <img class="avata" src="/static/images/img_head_mine.png" background-size="cover" />
+            </button>
+            <div class="avata-container" v-if="userInfo.avatarUrl">
+                <img class="avata" :src="userInfo.avatarUrl" background-size="cover" />
             </div>
             <div class="text" v-if="!userInfo.nickName">
                 未登录
@@ -79,18 +82,39 @@
                     scopes: 'auth_user',
                     success: (res) => {
                         my.getAuthUserInfo({
-                        success: (userInfo) => {
-                            this.userInfo = userInfo
-                        }
+                            success: (userInfo) => {
+                                this.userInfo = userInfo
+                            }
                         });
                     },
                 });
+            } else {
+                wx.getSetting({
+                    success: res => {
+                        if (res.authSetting['scope.userInfo']) {
+                            wx.getUserInfo({
+                                success: (res) => {
+                                    console.log(res)
+                                    this.userInfo = res.userInfo
+                                }
+                            });
+                        }
+                    }
+                })
             }
         },
         onShareAppMessage() {
             return this.shareMessage('/pages/index/index')
         },
         methods: {
+            getUserInfoFunc(e) {
+                console.log(e.detail.errMsg)
+                if(e.detail.errMsg == "getUserInfo:ok") {
+                    this.userInfo = e.detail.userInfo
+                } else {
+                    this.toast('获取授权失败！')
+                }
+            },
             call() {
                 if(this.$mp.platform == 'alipay') {
                     my.makePhoneCall({ 
@@ -165,6 +189,25 @@
        top:145rpx;
    }
    .avata-container .avata{
+       width: 140rpx;
+       height: 140rpx;
+       border-radius: 75rpx;
+       background-color: #fff;
+   }
+   .btn-img{
+       width: 150rpx;
+       height: 150rpx;
+       border-radius: 75rpx;
+       background-color: #fff;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       position: absolute;
+       left:300rpx;
+       top:145rpx;
+       padding: 0;
+   }
+   .btn-img .avata{
        width: 140rpx;
        height: 140rpx;
        border-radius: 75rpx;
