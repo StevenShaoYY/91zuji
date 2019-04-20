@@ -108,8 +108,10 @@
         },
         methods: {
             getUserInfoFunc(e) {
-                console.log(e.detail.errMsg)
                 if(e.detail.errMsg == "getUserInfo:ok") {
+                    if(!this.checkLogin()){
+                        this.showLogin=true
+                    }
                     this.userInfo = e.detail.userInfo
                 } else {
                     this.toast('获取授权失败！')
