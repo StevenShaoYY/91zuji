@@ -50,6 +50,10 @@
                 winHeight: ''
             }
         },
+        // onShow() {
+        //     let sta = this.tabList[this.activeItem].status
+        //     this.getOrderByStatus(sta, this.activeItem)
+        // },
         created () {
             if (this.$mp.platform === 'wechat') {
                 wx.getSystemInfo({

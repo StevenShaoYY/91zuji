@@ -133,6 +133,8 @@
         created () {
             this.orderId = this.$mp.query.id
             this.getOrderDetail()
+            let pages = getCurrentPages();
+            console.log(pages)
         },
         onShareAppMessage() {
             return this.shareMessage('/pages/index/index')
@@ -141,12 +143,16 @@
             paySuccess() {
                 this.showPopFlag = false
                 this.toast('支付成功！')
-                this.redirectToAddress('/pages/orderList/index')
+                // this.redirectToAddress('/pages/orderList/index')
+                let pages = getCurrentPages();
+                pages[pages.length - 2].onPullDownRefresh()
+                this.back()
             },
             payFail() {
                 this.showPopFlag = false
                 this.toast('支付失败！请重新支付！')
-                this.redirectToAddress('/pages/orderList/index')
+                // this.redirectToAddress('/pages/orderList/index')
+                this.back()
             },
             payUnknow() {
                 this.showPopFlag = false
@@ -187,6 +193,7 @@
                 this.showPopFlag = true
             },
             closePay() {
+                console.log(111)
                 this.showPopFlag = false
             },
             confiremOrder() {
@@ -198,9 +205,9 @@
                         cancelButtonText: '取消',
                         success: (result) => {
                             this.POST('api/tradeOrder/arriveConfirm', {"orderId": this.$mp.query.id}, res => {
-                                my.navigateBack({
-                                    delta: 1
-                                })                                
+                                let pages = getCurrentPages();
+                                pages[pages.length - 2].onPullDownRefresh()
+                                this.back()                              
                             });
                         },
                     });
@@ -212,9 +219,9 @@
                         cancelText: '取消',
                         success: (result) => {
                             this.POST('api/tradeOrder/arriveConfirm', {"orderId": this.$mp.query.id}, res => {
-                                wx.navigateBack({
-                                    delta: 1
-                                })                                
+                                let pages = getCurrentPages();
+                                pages[pages.length - 2].onPullDownRefresh()
+                                this.back()                                
                             });
                         },
                     });
@@ -270,9 +277,9 @@
                         success: (result) => {
                             if(result.confirm ==true) {
                                 this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
-                                    wx.navigateBack({
-                                        delta: 1
-                                    })                                
+                                    let pages = getCurrentPages();
+                                    pages[pages.length - 2].onPullDownRefresh()
+                                    this.back()                           
                                 });
                             } else {
                                 return
