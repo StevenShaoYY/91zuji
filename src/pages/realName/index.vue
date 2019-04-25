@@ -152,7 +152,8 @@
                     "workAddress": ""
                 }
                 this.POST('userBase/sumitInfo', dto, res => {
-                    this.zhimaCom()
+                    if(res.data.ok == true)
+                        this.zhimaCom()
                 },'user')
             },
             isCardNo(card) 

@@ -268,7 +268,7 @@
                         confirmText: '取消订单',
                         cancelText: '暂不需要',
                         success: (result) => {
-                            if(result.comfirm) {
+                            if(result.confirm ==true) {
                                 this.POST('api/tradeOrder/cancel', {"orderId": this.$mp.query.id}, res => {
                                     wx.navigateBack({
                                         delta: 1
@@ -277,7 +277,6 @@
                             } else {
                                 return
                             }
-                            
                         },
                     });
                 }
